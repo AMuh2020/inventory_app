@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
@@ -105,6 +106,62 @@ class _OrderPageState extends State<OrderPage> {
                         subtitle: Text('Quantity: ${snapshot.data?[index]['quantity']}'),
                       );
                     },
+                  ),
+                ),
+                // generate a receipt
+                // ElevatedButton.icon(
+                //   onPressed: () {
+                //     print('Print receipt button clicked!');
+                //   },
+                //   icon: const Icon(Icons.print),
+                //   label: const Text('Print Receipt'),
+                // ),
+                
+                // delete order
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete Order'),
+                              content: const Text('Are you sure you want to delete this order? This action cannot be undone.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final database = await openDatabase(
+                                      path.join(await getDatabasesPath(), 'inventory_app.db'),
+                                    );
+                                    await database.delete(
+                                      'orders',
+                                      where: 'id = ?',
+                                      whereArgs: [widget.orderId],
+                                    );
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const MainPage()),
+                                      (route) => false,
+                                    );
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          }
+                        );
+                      },
+                      icon: const Icon(Icons.delete),
+                      label: const Text('Delete Order'),
+                    ),
                   ),
                 ),
               ],

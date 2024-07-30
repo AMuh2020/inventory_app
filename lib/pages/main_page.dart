@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:inventory_app/components/custom_drawer.dart';
-
 import 'package:inventory_app/pages/cart_page.dart';
 import 'package:inventory_app/pages/orders_page.dart';
 import 'package:inventory_app/pages/products_page.dart';
-import 'package:inventory_app/utils/export.dart';
+// import 'package:inventory_app/utils/export.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,7 +14,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  late Widget _leading;
   final List<String> _titles = const [
     'Products',
     'Sell',
@@ -31,6 +28,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _title = _titles[_tabController.index];
   }
 
   @override
@@ -61,7 +59,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 );
               }
             ),
-            title: const Text('Products'),
+            title: Text(_title),
             actions: _getCurrentAction(context),
           ),
           bottomNavigationBar: TabBar(
@@ -72,7 +70,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 text: 'Products',
               ),
               Tab(
-                icon: Icon(Icons.point_of_sale ),
+                icon: Icon(Icons.point_of_sale),
                 text: 'Sell',
               ),
               Tab(

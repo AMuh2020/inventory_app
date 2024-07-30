@@ -1,4 +1,6 @@
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 String formatDateTime(String dateTime) {
   DateTime parsedDateTime = DateTime.parse(dateTime);
@@ -39,4 +41,15 @@ String dateToHumanReadableString(String date) {
   } else {
     return 'Older';
   }
+}
+
+Future<void> deleteDatabaseFile() async {
+  // Get the path to the database directory
+  final dbPath = await getDatabasesPath();
+  // Combine the directory path with the database name to get the full path
+  final path = join(dbPath, 'inventory_app.db');
+
+  // Delete the database file
+  await deleteDatabase(path);
+  print('Database deleted');
 }

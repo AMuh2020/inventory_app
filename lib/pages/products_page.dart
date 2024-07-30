@@ -20,21 +20,26 @@ class _ProductsPageState extends State<ProductsPage> {
   Future<List<Product>> getProducts() async {
     print('Getting products');
     // Open the database
-    final database = await openDatabase(
-      path.join(await getDatabasesPath(), 'inventory_app.db'),
-    );
-
-    final List<Map<String, dynamic>> products = await database.query('products');
-
-    return List.generate(products.length, (index) {
-      return Product(
-        id: products[index]['id'],
-        name: products[index]['name'],
-        price: products[index]['price'],
-        quantity: products[index]['quantity'],
-        imagePath: products[index]['image_path'],
+    try {
+      final database = await openDatabase(
+        path.join(await getDatabasesPath(), 'inventory_app.db'),
       );
-    });
+
+      final List<Map<String, dynamic>> products = await database.query('products');
+
+      return List.generate(products.length, (index) {
+        return Product(
+          id: products[index]['id'],
+          name: products[index]['name'],
+          price: products[index]['price'],
+          quantity: products[index]['quantity'],
+          imagePath: products[index]['image_path'],
+        );
+      });
+    } catch (e) {
+      print('Error getting products: $e');
+      return [];
+    }
   }
   void onProductEdited() {
     print('Product edited! Refreshing products list');

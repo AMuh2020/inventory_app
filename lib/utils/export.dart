@@ -100,3 +100,5 @@
 //     return {'path': null, 'success': false};
 //   }
 // }
+
+// TODO: Reciept generation and printing

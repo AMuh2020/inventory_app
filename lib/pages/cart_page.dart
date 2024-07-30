@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:inventory_app/main.dart';
+import 'package:inventory_app/models/cart_item.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -37,21 +38,21 @@ class _CartPageState extends State<CartPage> {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     // Get the products in the cart
-    List<Product> products = Provider.of<CartModel>(context, listen: false).products;
+    List<CartItem> cart = Provider.of<CartModel>(context, listen: false).products;
     // For each product in the cart
-    for (final product in products) {
+    for (final cartItem in cart) {
       // Update the product quantity - decrement by the quantity in the cart
       await database.rawUpdate(
         'UPDATE products SET quantity = quantity - ? WHERE id = ?',
-        [product.quantity, product.id],
+        [cartItem.quantity, cartItem.product.id],
       );
       // Create a new order_products record - linking the order and product
       await database.insert(
         'order_products',
         <String, dynamic>{
           'order_id': order,
-          'product_id': product.id,
-          'quantity': product.quantity,
+          'product_id': cartItem.product.id,
+          'quantity': cartItem.quantity,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -95,7 +96,7 @@ class _CartPageState extends State<CartPage> {
               return ListView.builder(
                 itemCount: cart.products.length,
                 itemBuilder: (context, index) {
-                  final product = cart.products[index];
+                  final cartItem = cart.products[index];
                   // return ListTile(
                   //   leading: SizedBox(
                   //     width: 50,
@@ -118,14 +119,14 @@ class _CartPageState extends State<CartPage> {
                         SizedBox(
                           width: 50,
                           height: 50,
-                          child: product.imagePath.isNotEmpty ? Image.file(File(product.imagePath)) : Placeholder(),
+                          child: cartItem.product.imagePath.isNotEmpty ? Image.file(File(cartItem.product.imagePath)) : Placeholder(),
                         ),
                         SizedBox(width: 2),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('${product.name} ${product.quantity > 1 ? 'x${product.quantity}' : ''}'),
-                            Text('Price: ${double.parse(product.price) * product.quantity}'),
+                            Text('${cartItem.product.name} ${cartItem.quantity > 1 ? 'x${cartItem.quantity}' : ''}'),
+                            Text('Price: ${double.parse(cartItem.product.price) * cartItem.quantity}'),
                           ],
                         ),
                         Spacer(),
@@ -134,14 +135,14 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: const Icon(Icons.remove),
                               onPressed: () {
-                                cart.decrementProductQuantity(product);
+                                cart.decrementCartItemQuantity(cartItem);
                               },
                             ),
-                            Text('${product.quantity}'),
+                            Text('${cartItem.quantity}'),
                             IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: () {
-                                cart.incrementProductQuantity(product);
+                                cart.incrementCartItemQuantity(cartItem);
                               },
                             ),
                           ],
@@ -149,7 +150,7 @@ class _CartPageState extends State<CartPage> {
                         IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            cart.removeProduct(product);
+                            cart.removeCartItemFromCart(cartItem);
                           },
                         ),
                       ],

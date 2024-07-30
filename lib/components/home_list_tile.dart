@@ -18,7 +18,7 @@ class ProductListTile extends StatelessWidget {
   int quantityInCart(BuildContext context) {
     final cart = Provider.of<CartModel>(context);
     // get the quantity of the product using the product id
-    return cart.getProductQuantity(product.id);
+    return cart.getProductQuantity(product);
   }
 
   @override
@@ -82,14 +82,7 @@ class ProductListTile extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           print('Add to cart button clicked!');
-                          Product productItem = Product(
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            quantity: 1,
-                            imagePath: product.imagePath,
-                          );
-                          Provider.of<CartModel>(context, listen: false).addProduct(productItem);
+                          Provider.of<CartModel>(context, listen: false).addProductToCart(product);
                         },
                         child: const Text('Add to cart'),
                       ),

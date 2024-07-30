@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:inventory_app/models/cart_item.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:inventory_app/pages/main_page.dart';
+import 'package:inventory_app/themes/theme_providor.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:inventory_app/utils/utils.dart' as utils;
 
-Future<void> deleteDatabaseFile() async {
-  // Get the path to the database directory
-  final dbPath = await getDatabasesPath();
-  // Combine the directory path with the database name to get the full path
-  final path = join(dbPath, 'inventory_app.db');
-
-  // Delete the database file
-  await deleteDatabase(path);
-}
 
 Future<void> requestPermissions() async {
   // PermissionStatus status = await Permission.manageExternalStorage.status;
@@ -36,7 +30,7 @@ void main() async {
 
   // await requestPermissions(); b 
 
-  // deleteDatabaseFile();
+  // utils.deleteDatabaseFile();
   // Open the database and store the reference.
   final database = openDatabase(
     // Set the path to the database. Note: Using the `join` function from the
@@ -62,8 +56,11 @@ void main() async {
     version: 1,
   );
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => CartModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CartModel()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Add other providers here
+      ],
       child: const MainApp(),
     ),
   );
@@ -75,9 +72,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp( 
-      theme: ThemeData(
-        
-      ),
+      theme: Provider.of<ThemeProvider>(context).themeData,
       home: const MainPage(),
     );
   }
@@ -86,70 +81,74 @@ class MainApp extends StatelessWidget {
 
 
 class CartModel extends ChangeNotifier {
-  final List<Product> _products = [];
+  final List<CartItem> _cart = [];
 
-  double get totalPrice => _products.fold(0, (total, current) => total + double.parse(current.price) * current.quantity);
+  double get totalPrice => _cart.fold(0, (total, current) => total + double.parse(current.product.price) * current.quantity);
 
-  // Check if a product is already in the cart - helper function for addProduct
-  List isProductInCart(Product product) {
-    for (var item in _products) {
-      if (item.id == product.id) {
-        return [true, _products.indexOf(item)];
-      }
-    }
-    return [false, null];
-  }
-
-  // Add a product to the cart
-  void addProduct(Product product) {
-    // if a product with the same id is already in the cart, increment its quantity
-    if (isProductInCart(product)[0]) {
-      print('Product already in cart, incrementing quantity');
-      _products[isProductInCart(product)[1]].quantity += 1;
-    } else {
-      _products.add(product);
-    }
-    notifyListeners();
-  }
-
-  // Increment the quantity of a product in the cart
-  void incrementProductQuantity(Product product) {
-    _products[isProductInCart(product)[1]].quantity += 1;
-    notifyListeners();
-  }
-
-  // Decrement the quantity of a product in the cart
-  void decrementProductQuantity(Product product) {
-    if (_products[isProductInCart(product)[1]].quantity > 1) {
-      _products[isProductInCart(product)[1]].quantity -= 1;
-    } else {
-      removeProduct(product);
-    }
-    notifyListeners();
-  }
-
-  // Remove a product from the cart
-  void removeProduct(Product product) {
-    _products.remove(product);
-    notifyListeners();
-  }
-
-  // Clear the cart
   void clearCart() {
-    _products.clear();
+    _cart.clear();
     notifyListeners();
   }
 
-  // Get the quantity of a product in the cart
-  int getProductQuantity(int id) {
-    for (var item in _products) {
-      if (item.id == id) {
-        return item.quantity;
+  // check if the product is already in the cart
+  CartItem? getCartItem(int productId) {
+    for (final cartItem in _cart) {
+      if (cartItem.product.id == productId) {
+        return cartItem;
       }
+    }
+    return null;
+  }
+
+  void addProductToCart(Product product) {
+    // Check if the product is already in the cart
+    final cartItem = getCartItem(product.id);
+    // If the product is not in the cart, add it
+    if (cartItem == null) {
+      print('Product not in cart');
+      print(product.quantity);
+      if (product.quantity == 0) {
+        print('Product out of stock');
+        print(_cart);
+        return;
+      }
+      _cart.add(CartItem(product: product, quantity: 1));
+    } else {
+      // If the product is in the cart, increment the quantity
+      cartItem.quantity++;
+      if (cartItem.product.quantity < cartItem.quantity) {
+        cartItem.quantity--;
+      }
+    }
+    notifyListeners();
+  }
+  void decrementCartItemQuantity(CartItem cartItem) {
+    cartItem.quantity--;
+    if (cartItem.quantity == 0) {
+      _cart.remove(cartItem);
+    }
+    notifyListeners();
+  }
+  void incrementCartItemQuantity(CartItem cartItem) {
+    cartItem.quantity++;
+    if (cartItem.product.quantity < cartItem.quantity) {
+      cartItem.quantity--;
+    }
+    notifyListeners();
+  }
+  void removeCartItemFromCart(CartItem cartItem) {
+    _cart.remove(cartItem);
+    notifyListeners();
+  }
+  
+  int getProductQuantity(Product product) {
+    final cartItem = getCartItem(product.id);
+    if (cartItem != null) {
+      return cartItem.quantity;
     }
     return 0;
   }
 
   // Get the list of products in the cart
-  List<Product> get products => _products;
+  List<CartItem> get products => _cart;
 }
