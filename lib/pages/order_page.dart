@@ -1,0 +1,121 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as path;
+
+
+class OrderPage extends StatefulWidget {
+  const OrderPage({super.key, required this.orderId});
+
+  final String? orderId;
+
+  @override
+  State<OrderPage> createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+  Map<String, dynamic> orderDetails = {};
+
+  Future<List<Map<String, dynamic>>> _fetchOrder() async {
+    // Fetch the order from the database
+    final database = await openDatabase(
+      path.join(await getDatabasesPath(), 'inventory_app.db'),
+    );
+    final order = await database.query(
+      'orders',
+      where: 'id = ?',
+      whereArgs: [widget.orderId],
+    );
+    print(order);
+    orderDetails = order[0];
+    // Fetch the products in the order
+    final List<Map<String, dynamic>> orderProducts = await database.query(
+      'order_products',
+      where: 'order_id = ?',
+      whereArgs: [order[0]['id']],
+    );
+    print(orderProducts);
+    final List<Map<String, dynamic>> products = [];
+    for (final orderProduct in orderProducts) {
+      final product_query = await database.query(
+        'products',
+        where: 'id = ?',
+        whereArgs: [orderProduct['product_id']],
+      );
+      final product = Map<String, dynamic>.from(product_query[0]);
+      // print('PRO DUCT$product');
+      product['quantity'] = orderProduct['quantity'];
+      products.add(product);
+      
+    }
+    return products;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Order Details'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: FutureBuilder(
+        future: _fetchOrder(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            print(orderDetails);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Order #${widget.orderId}'),
+                      Text('${utils.formatTime(orderDetails['order_datetime'])}'),
+                      Text('${utils.formatDate(orderDetails['order_datetime'])}'),
+                      Text('Test: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
+                      Text('Customer: ${orderDetails['customer_name']}'),
+                      Text('Customer Phone: ${orderDetails['customer_phone']}'),
+                      Text('Total: ${orderDetails['total']}'),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: snapshot.data?[index]['image_path'] != null
+                            ? Image.file(
+                                File(snapshot.data?[index]['image_path']),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : const Icon(Icons.image),
+                        title: Text('Product: ${snapshot.data?[index]['name']}'),
+                        subtitle: Text('Quantity: ${snapshot.data?[index]['quantity']}'),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
