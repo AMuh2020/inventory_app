@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_app/components/home_list_tile.dart';
+import 'package:inventory_app/components/product_list_tile.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:inventory_app/pages/add_product_page.dart';
 import 'package:sqflite/sqflite.dart';

@@ -26,7 +26,7 @@ class _AddProductPageState extends State<AddProductPage> {
   Future<XFile?>? selectedImageFuture;
 
   // store the path of the image
-  String _imgPath = ''; 
+  String _imgPath = '';
 
   Future<void> _saveProduct(String imgPath) async {
     final name = _nameController.text;

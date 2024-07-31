@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inventory_app/components/settings_tile.dart';
-import 'package:inventory_app/themes/theme_providor.dart';
+import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:provider/provider.dart';
 
@@ -59,7 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   builder: (context) {
                     return AlertDialog(
                       title: const Text('Delete All Data'),
-                      content: const Text('Are you sure you want to delete all data? This action cannot be undone. The app will be close after deleting all data.'),
+                      content: const Text('Are you sure you want to delete all data? This action cannot be undone. The app will need to be restarted.'),
                       actions: [
                         TextButton(
                           onPressed: () {

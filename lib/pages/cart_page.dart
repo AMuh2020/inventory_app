@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:inventory_app/main.dart';
 import 'package:inventory_app/models/cart_item.dart';
-import 'package:inventory_app/models/product.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
@@ -89,7 +89,13 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Order Summary'),
+        const Text(
+          'Order Summary',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Expanded(
           child: Consumer<CartModel>(
             builder: (context, cart, child) {
@@ -168,19 +174,30 @@ class _CartPageState extends State<CartPage> {
               TextField(
                 controller: _customerNameController,
                 decoration: const InputDecoration(
+                  icon: Icon(Icons.person),
                   labelText: 'Customer name',
                 ),
+                onTapOutside: (event) => FocusScope.of(context).unfocus(),
               ),
               TextField(
                 controller: _customerPhoneNumberController,
                 decoration: const InputDecoration(
+                  icon: Icon(Icons.phone),
                   labelText: 'Customer phone number',
+                  hintText: '0712345678',
                 ),
+                onTapOutside: (event) => FocusScope.of(context).unfocus(),
               ),
             ],
           ),
         ),
-        Text('Total: ${Provider.of<CartModel>(context).totalPrice}'),
+        Text(
+          'Total: ${Provider.of<CartModel>(context).totalPrice}',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
     
         ElevatedButton(
           onPressed: () {

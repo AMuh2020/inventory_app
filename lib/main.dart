@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:inventory_app/models/cart_item.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:inventory_app/pages/main_page.dart';
-import 'package:inventory_app/themes/theme_providor.dart';
+import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:inventory_app/utils/utils.dart' as utils;
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:inventory_app/utils/utils.dart' as utils;
 
 
 Future<void> requestPermissions() async {
@@ -32,6 +32,7 @@ void main() async {
 
   // utils.deleteDatabaseFile();
   // Open the database and store the reference.
+  // ignore: unused_local_variable
   final database = openDatabase(
     // Set the path to the database. Note: Using the `join` function from the
     // `path` package is best practice to ensure the path is correctly

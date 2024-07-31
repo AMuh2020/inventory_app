@@ -29,10 +29,7 @@ class ProductListTile extends StatelessWidget {
         onTap: () {
           print('Item ${product.name} clicked!');
         },
-        child: badges.Badge(
-          showBadge: quantityInCart(context) > 0,
-          badgeContent: Text('${quantityInCart(context)}'),
-          child: Container(
+        child:  Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(5),
@@ -79,12 +76,19 @@ class ProductListTile extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          print('Add to cart button clicked!');
-                          Provider.of<CartModel>(context, listen: false).addProductToCart(product);
-                        },
-                        child: const Text('Add to cart'),
+                      badges.Badge(
+                        showBadge: quantityInCart(context) > 0,
+                        badgeStyle: badges.BadgeStyle(
+                          badgeColor: Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                        badgeContent: Text('${quantityInCart(context)}'),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            print('Add to cart button clicked!');
+                            Provider.of<CartModel>(context, listen: false).addProductToCart(product);
+                          },
+                          child: const Text('Add to cart'),
+                        ),
                       ),
                       ElevatedButton.icon(
                         onPressed: () {
@@ -112,7 +116,7 @@ class ProductListTile extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      
     );
   }
 }
