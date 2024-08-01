@@ -7,28 +7,30 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
-// import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:inventory_app/utils/utils.dart' as utils;
 
 
-Future<void> requestPermissions() async {
-  // PermissionStatus status = await Permission.manageExternalStorage.status;
+// Future<void> requestPermissions() async {
+//   // PermissionStatus status = await Permission.manageExternalStorage.status;
   
-  // print('Storage permission status: $status');
-  // if (status.isDenied || status.isPermanentlyDenied ) {
-  //   status = await Permission.manageExternalStorage.request();
-  //   print('Storage permission status2: $status');
-  // }
+//   // print('Storage permission status: $status');
+//   // if (status.isDenied || status.isPermanentlyDenied ) {
+//   //   status = await Permission.manageExternalStorage.request();
+//   //   print('Storage permission status2: $status');
+//   // }
 
-  // if (!status.isGranted) {
-  //   // Handle the case where the permission is not granted
-  //   print('Storage permission denied');
-  // }
-}
+//   // if (!status.isGranted) {
+//   //   // Handle the case where the permission is not granted
+//   //   print('Storage permission denied');
+//   // }
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await requestPermissions(); b 
+  // await requestPermissions();
+
+  await utils.settingsStartUp();
 
   // utils.deleteDatabaseFile();
   // Open the database and store the reference.
@@ -49,6 +51,10 @@ void main() async {
       );
       db.execute(
         'CREATE TABLE order_products (order_id INTEGER, product_id INTEGER, quantity INTEGER, PRIMARY KEY (order_id, product_id), FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE, FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE)'
+      );
+      // Create a table to store the history of products for when the product is deleted
+      db.execute(
+        'CREATE TABLE products_history(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT, action TEXT, action_datetime TEXT)',
       );
     },
    

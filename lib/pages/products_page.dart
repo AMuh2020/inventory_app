@@ -60,7 +60,7 @@ class _ProductsPageState extends State<ProductsPage> {
       children: [
         Expanded(
           child: FutureBuilder<List<Product>>(
-            future: getProducts(),
+            future: productsListFuture,
             builder: (context, snapshot) {
               // if the connection is in progress, show a progress indicator else show the data
               if (snapshot.connectionState == ConnectionState.waiting) {

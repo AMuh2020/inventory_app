@@ -4,6 +4,7 @@ import 'package:inventory_app/components/settings_tile.dart';
 import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:provider/provider.dart';
+import 'package:inventory_app/globals.dart' as globals;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,7 +14,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isDarkMode = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +25,14 @@ class _SettingsPageState extends State<SettingsPage> {
           // dark mode toggle
           SettingsTile(
             text: 'Dark Mode',
+            helperText: 'Toggle dark mode',
             icon: Icons.dark_mode,
             button: Switch(
-              value: isDarkMode,
+              value: globals.darkMode,
               onChanged: (value) {
                 Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
                 setState(() {
-                  isDarkMode = !isDarkMode;
+                  globals.darkMode = !globals.darkMode;
                 });
               },
             ),
@@ -47,40 +48,33 @@ class _SettingsPageState extends State<SettingsPage> {
           //   icon: Icons.settings_backup_restore,
           //   button: const Icon(Icons.arrow_forward),
           // ),
+          // customer info fields toggle
+          SettingsTile(
+            text: 'Customer Info Fields',
+            helperText: 'Adds the option to enter customer name and phone number when selling products',
+            icon: Icons.person,
+            button: Switch(
+              value: globals.customerInfoFields,
+              onChanged: (value) {
+                // set the state with the new value
+                setState(() {
+                  // toggle the value
+                  globals.customerInfoFields = !globals.customerInfoFields;
+                });
+                // function to save the value to shared preferences
+                utils.toggleCustomerInfoFields(globals.customerInfoFields);
+              },
+            ),
+          ),
           // delete all data
           SettingsTile(
             text: 'Delete All Data',
+            helperText: 'Delete all data from the app',
             icon: Icons.delete_forever,
             button: IconButton(
               icon: const Icon(Icons.arrow_forward),
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Delete All Data'),
-                      content: const Text('Are you sure you want to delete all data? This action cannot be undone. The app will need to be restarted.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // delete all data
-                            utils.deleteDatabaseFile();
-
-                            // rebuild the previous page
-                            SystemNavigator.pop();
-                          },
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    );
-                  }
-                );
+                _deleteDialog();
               },
             ),
           ),
@@ -96,6 +90,35 @@ class _SettingsPageState extends State<SettingsPage> {
           // )
         ],
       )
+    );
+  }
+  void _deleteDialog () {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete All Data'),
+          content: const Text('Are you sure you want to delete all data? This action cannot be undone. The app will need to be restarted.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // delete all data
+                utils.deleteDatabaseFile();
+
+                // rebuild the previous page
+                SystemNavigator.pop();
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      }
     );
   }
 }

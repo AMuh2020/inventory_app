@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:inventory_app/globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
   Color seedColor = Colors.purple;
@@ -22,7 +24,7 @@ class ThemeProvider extends ChangeNotifier {
       ),
     );
 
-    _themeData = lightMode;
+    _themeData = isDarkMode ? darkMode : lightMode;
   }
 
   late ThemeData darkMode;
@@ -31,15 +33,21 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get themeData => _themeData;
 
-  bool get isDarkMode => _themeData == darkMode;
+  bool get isDarkMode => globals.darkMode;
 
   void toggleTheme() {
+    savePrefs();
     if (isDarkMode) {
       _themeData = lightMode;
     } else {
       _themeData = darkMode;
     }
     notifyListeners();
+  }
+  // save the shared preferences
+  void savePrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('darkMode', isDarkMode);
   }
   void changeSeedColor(Color newColor) {
     darkMode = ThemeData(

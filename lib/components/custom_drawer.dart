@@ -10,11 +10,12 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              // color from the theme
+              color: Theme.of(context).primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Inventory App',
                 style: TextStyle(
@@ -24,6 +25,15 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
           ),
+          // analytics - not implemented, for next update
+          // DrawerTile(
+          //   text: 'Analytics',
+          //   icon: Icons.analytics,
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // settings
           DrawerTile(
             text: 'Settings',
             icon: Icons.settings,
@@ -32,7 +42,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SettingsPage(),
+                  builder: (context) => const SettingsPage(),
                 ),
               );
             },
@@ -44,15 +54,15 @@ class CustomDrawer extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          Spacer(),
-          Text(
+          const Spacer(),
+          const Text(
             'Version 1.0.0',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 16,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );

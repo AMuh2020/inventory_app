@@ -1,6 +1,53 @@
 import 'package:intl/intl.dart';
+// import 'package:inventory_app/themes/theme_provider.dart';
+// import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:inventory_app/globals.dart' as globals;
+
+Future settingsStartUp() async {
+  print('Starting up, loading settings');
+  // Get the shared preferences
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Check if the dark mode key exists
+  if (!prefs.containsKey('darkMode')) {
+    // If it doesn't exist, set it to false
+    prefs.setBool('darkMode', false);
+    globals.darkMode = false;
+  } else {
+    print('Dark mode key exists');
+    print('Dark mode value: ${prefs.getBool('darkMode')}');
+    // If it does exist, set the dark mode to the value in the shared preferences
+    globals.darkMode = prefs.getBool('darkMode')!;
+  }
+  
+  // Check if the customer info fields key exists
+  if (!prefs.containsKey('customerInfoFields')) {
+    // If it doesn't exist, set it to false
+    prefs.setBool('customerInfoFields', false);
+    globals.customerInfoFields = false;
+  } else {
+    print('Customer info fields key exists');
+    print('Customer info fields value: ${prefs.getBool('customerInfoFields')}');
+    // If it does exist, set the customer info fields to the value in the shared preferences
+    globals.customerInfoFields = prefs.getBool('customerInfoFields')!;
+
+  }
+
+  // not implemented yet
+  // Check if the theme color key exists
+  // if (!prefs.containsKey('themeColor')) {
+  //   // If it doesn't exist, set it to the default color
+  //   prefs.setInt('themeColor', 0xFF2196F3);
+  // }
+  print('Settings loaded');
+}
+
+void toggleCustomerInfoFields(bool customerInfoField) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool('customerInfoFields', customerInfoField);
+}
 
 String formatDateTime(String dateTime) {
   DateTime parsedDateTime = DateTime.parse(dateTime);

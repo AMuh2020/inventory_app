@@ -94,18 +94,22 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<Widget> _getCurrentAction(BuildContext context) {
     if (_tabController.index == 0) {
       return [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            print('Add product button clicked!');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            print('Search button clicked!');
-          },
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.add),
+        //   onPressed: () {
+        //     print('Add product button clicked!');
+        //   },
+        // ),
+        // IconButton(
+        //   icon: const Icon(Icons.search),
+        //   onPressed: () {
+        //     print('Search button clicked!');
+        //     // add search functionality
+        //     // a dropdown showing the search bar
+
+
+        //   },
+        // ),
       ];
     } else if (_tabController.index == 1) {
       return [];
@@ -134,12 +138,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         //   },
         // ),
         // search button
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            print('Search button clicked!');
-          },
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.search),
+        //   onPressed: () {
+        //     print('Search button clicked!');
+        //   },
+        // ),
       ];
     } else {
       return [];

@@ -50,7 +50,7 @@ class _AddProductPageState extends State<AddProductPage> {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     print('Product saved!');
-    if (Navigator.canPop(context)) {
+    if (mounted) {
       Navigator.pop(context);
     }
   }
@@ -121,23 +121,37 @@ class _AddProductPageState extends State<AddProductPage> {
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Product name',
+                  icon: Icon(Icons.shopping_bag),
                 ),
               ),
               TextField(
                 controller: _priceController,
                 decoration: const InputDecoration(
                   labelText: 'Price',
+                  icon: Icon(Icons.attach_money),
                 ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
               TextField(
                 controller: _quantityController,
                 decoration: const InputDecoration(
                   labelText: 'Quantity',
+                  icon: Icon(Icons.inventory_2),
                 ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: false),
               ),
               ElevatedButton(
                 onPressed: () {
                   print('Save button clicked!');
+                  // input validation
+                  if (_nameController.text.isEmpty || _priceController.text.isEmpty || _quantityController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please fill in all fields!'),
+                      ),
+                    );
+                    return;
+                  }
                   _saveProduct(_imgPath);
                 },
                 child: const Text('Save'),

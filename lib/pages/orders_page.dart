@@ -43,6 +43,16 @@ class _OrdersPageState extends State<OrdersPage> {
             future: getOrders(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error fetching orders'),
+                  );
+                }
+                if (snapshot.data?.isEmpty ?? true) {
+                  return const Center(
+                    child: Text('No orders found, start making sales to create orders'),
+                  );
+                }
                 return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {

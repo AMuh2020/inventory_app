@@ -39,39 +39,49 @@ class ProductListTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 80,
-                        height: 80,
-                        child: product.imagePath.isNotEmpty 
-                          ? Image.file(
-                              File(product.imagePath),
-                              // fit: BoxFit.cover,
-                            ) 
-                          : Placeholder() // Or any other placeholder widget,
-                      ),
-                      SizedBox(width: 4),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Text('Item name: ${product.name}'),
-                          Text(
-                            '${product.name}',
-                            style: Theme.of(context).textTheme.titleMedium,
+                  SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: product.imagePath.isNotEmpty 
+                      ? Image.file(
+                          File(product.imagePath),
+                          // fit: BoxFit.cover,
+                        ) 
+                      : const Placeholder() // Or any other placeholder widget,
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Text('Item name: ${product.name}'),
+                              Text(
+                                product.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  // overflow: TextOverflow.ellipsis,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              Text(
+                                'price: ${product.price}',
+                                style: Theme.of(context).textTheme.titleMedium
+                              ),
+                              Text(
+                                'Quantity in stock: ${product.quantity}',
+                                style: Theme.of(context).textTheme.titleSmall
+                              ),
+                            ],
                           ),
-                          Text(
-                            'price: ${product.price}',
-                            style: Theme.of(context).textTheme.titleMedium
-                          ),
-                          Text(
-                            'Quantity in stock: ${product.quantity}',
-                            style: Theme.of(context).textTheme.titleSmall
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
