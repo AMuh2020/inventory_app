@@ -34,6 +34,17 @@ Future settingsStartUp() async {
     globals.customerInfoFields = prefs.getBool('customerInfoFields')!;
 
   }
+  // Check if the currency symbol key exists
+  if (!prefs.containsKey('currencySymbol')) {
+    // If it doesn't exist, set it to the default currency symbol
+    prefs.setString('currencySymbol', '\$');
+    globals.currencySymbol = '\$';
+  } else {
+    print('Currency symbol key exists');
+    print('Currency symbol value: ${prefs.getString('currencySymbol')}');
+    // If it does exist, set the currency symbol to the value in the shared preferences
+    globals.currencySymbol = prefs.getString('currencySymbol')!;
+  }
 
   // not implemented yet
   // Check if the theme color key exists

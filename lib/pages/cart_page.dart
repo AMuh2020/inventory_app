@@ -213,7 +213,7 @@ class _CartPageState extends State<CartPage> {
           ) :
         
         Text(
-          'Total: ${Provider.of<CartModel>(context).totalPrice}',
+          'Total: ${globals.currencySymbol}${Provider.of<CartModel>(context).totalPrice}',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,

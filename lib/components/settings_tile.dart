@@ -4,13 +4,13 @@ class SettingsTile extends StatefulWidget {
   final String text;
   final String helperText;
   final IconData icon;
-  final Widget button;
+  final Widget trailing;
   const SettingsTile({
     super.key,
     required this.text,
     required this.helperText,
     required this.icon,
-    required this.button,
+    required this.trailing,
   });
 
   @override
@@ -29,7 +29,7 @@ class _SettingsTileState extends State<SettingsTile> {
         widget.icon,
         size: 30,
       ),
-      trailing: widget.button,
+      trailing: widget.trailing,
     );
   }
 }

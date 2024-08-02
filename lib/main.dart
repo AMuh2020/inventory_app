@@ -44,17 +44,13 @@ void main() async {
     onCreate: (db, version) {
       print('Creating the products table');
       db.execute(
-        'CREATE TABLE products(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT)',
+        'CREATE TABLE products(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT, created_at TEXT, updated_at TEXT, is_visible BOOLEAN NOT NULL CHECK (is_visible IN (0, 1)) DEFAULT 1)',
       );
       db.execute(
         'CREATE TABLE orders(id INTEGER PRIMARY KEY, total TEXT, order_datetime TEXT, customer_name TEXT, customer_phone TEXT)',
       );
       db.execute(
         'CREATE TABLE order_products (order_id INTEGER, product_id INTEGER, quantity INTEGER, PRIMARY KEY (order_id, product_id), FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE, FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE)'
-      );
-      // Create a table to store the history of products for when the product is deleted
-      db.execute(
-        'CREATE TABLE products_history(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT, action TEXT, action_datetime TEXT)',
       );
     },
    

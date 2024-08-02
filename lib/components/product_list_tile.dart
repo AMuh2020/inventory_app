@@ -6,6 +6,7 @@ import 'package:inventory_app/models/product.dart';
 import 'package:inventory_app/pages/product_edit_page.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:inventory_app/globals.dart' as globals;
 
 class ProductListTile extends StatelessWidget {
   const ProductListTile({super.key, required this.product, required this.onProductEdited});
@@ -70,7 +71,7 @@ class ProductListTile extends StatelessWidget {
                                 maxLines: 2,
                               ),
                               Text(
-                                'price: ${product.price}',
+                                'price: ${globals.currencySymbol}${product.price}',
                                 style: Theme.of(context).textTheme.titleMedium
                               ),
                               Text(

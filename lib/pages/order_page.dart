@@ -86,10 +86,10 @@ class _OrderPageState extends State<OrderPage> {
                       Text('Test: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
                       if (globals.customerInfoFields) 
                        Text('Customer: ${orderDetails['customer_name']}'),
-                      if (globals.customerInfoFields)
+                      if (globals.customerInfoFields) 
                        Text('Customer Phone: ${orderDetails['customer_phone']}'),
                       
-                      Text('Total: ${orderDetails['total']}'),
+                      Text('Total: ${globals.currencySymbol}${orderDetails['total']}'),
                     ],
                   ),
                 ),

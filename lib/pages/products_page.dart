@@ -25,7 +25,12 @@ class _ProductsPageState extends State<ProductsPage> {
         path.join(await getDatabasesPath(), 'inventory_app.db'),
       );
 
-      final List<Map<String, dynamic>> products = await database.query('products');
+      // get all the products that are visible
+      final List<Map<String, dynamic>> products = await database.query(
+        'products',
+        where: 'is_visible = ?',
+        whereArgs: [1],
+      );
 
       return List.generate(products.length, (index) {
         return Product(

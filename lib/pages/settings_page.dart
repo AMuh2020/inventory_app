@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inventory_app/components/settings_tile.dart';
+import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:provider/provider.dart';
@@ -19,6 +20,16 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // instead of popping the context, remove stack and push homepage
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const MainPage()),
+              (route) => false,
+            );
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -27,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
             text: 'Dark Mode',
             helperText: 'Toggle dark mode',
             icon: Icons.dark_mode,
-            button: Switch(
+            trailing: Switch(
               value: globals.darkMode,
               onChanged: (value) {
                 Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
@@ -35,6 +46,29 @@ class _SettingsPageState extends State<SettingsPage> {
                   globals.darkMode = !globals.darkMode;
                 });
               },
+            ),
+          ),
+          // currency symbol
+          SettingsTile(
+            text: 'Currency Symbol',
+            helperText: 'Set the currency symbol',
+            icon: Icons.attach_money,
+            trailing: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: DropdownButton(
+                value: globals.currencySymbol,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    globals.currencySymbol = newValue!;
+                  });
+                },
+                items: ['\$', '₹', '€', '£', '¥'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ),
           ),
           // color picker for theme
@@ -53,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
             text: 'Customer Info Fields',
             helperText: 'Adds the option to enter customer name and phone number when selling products',
             icon: Icons.person,
-            button: Switch(
+            trailing: Switch(
               value: globals.customerInfoFields,
               onChanged: (value) {
                 // set the state with the new value
@@ -71,7 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
             text: 'Delete All Data',
             helperText: 'Delete all data from the app',
             icon: Icons.delete_forever,
-            button: IconButton(
+            trailing: IconButton(
               icon: const Icon(Icons.arrow_forward),
               onPressed: () {
                 _deleteDialog();
