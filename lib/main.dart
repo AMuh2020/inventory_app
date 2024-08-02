@@ -7,28 +7,30 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 // import 'package:permission_handler/permission_handler.dart';
-// import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:inventory_app/utils/utils.dart' as utils;
 
 
-Future<void> requestPermissions() async {
-  // PermissionStatus status = await Permission.manageExternalStorage.status;
+// Future<void> requestPermissions() async {
+//   // PermissionStatus status = await Permission.manageExternalStorage.status;
   
-  // print('Storage permission status: $status');
-  // if (status.isDenied || status.isPermanentlyDenied ) {
-  //   status = await Permission.manageExternalStorage.request();
-  //   print('Storage permission status2: $status');
-  // }
+//   // print('Storage permission status: $status');
+//   // if (status.isDenied || status.isPermanentlyDenied ) {
+//   //   status = await Permission.manageExternalStorage.request();
+//   //   print('Storage permission status2: $status');
+//   // }
 
-  // if (!status.isGranted) {
-  //   // Handle the case where the permission is not granted
-  //   print('Storage permission denied');
-  // }
-}
+//   // if (!status.isGranted) {
+//   //   // Handle the case where the permission is not granted
+//   //   print('Storage permission denied');
+//   // }
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await requestPermissions(); b 
+  // await requestPermissions();
+
+  await utils.settingsStartUp();
 
   // utils.deleteDatabaseFile();
   // Open the database and store the reference.
@@ -42,7 +44,7 @@ void main() async {
     onCreate: (db, version) {
       print('Creating the products table');
       db.execute(
-        'CREATE TABLE products(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT)',
+        'CREATE TABLE products(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT, created_at TEXT, updated_at TEXT, is_visible BOOLEAN NOT NULL CHECK (is_visible IN (0, 1)) DEFAULT 1)',
       );
       db.execute(
         'CREATE TABLE orders(id INTEGER PRIMARY KEY, total TEXT, order_datetime TEXT, customer_name TEXT, customer_phone TEXT)',

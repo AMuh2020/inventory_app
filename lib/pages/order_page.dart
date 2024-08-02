@@ -5,6 +5,7 @@ import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
+import 'package:inventory_app/globals.dart' as globals;
 
 
 class OrderPage extends StatefulWidget {
@@ -83,9 +84,12 @@ class _OrderPageState extends State<OrderPage> {
                       Text('${utils.formatTime(orderDetails['order_datetime'])}'),
                       Text('${utils.formatDate(orderDetails['order_datetime'])}'),
                       Text('Test: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
-                      Text('Customer: ${orderDetails['customer_name']}'),
-                      Text('Customer Phone: ${orderDetails['customer_phone']}'),
-                      Text('Total: ${orderDetails['total']}'),
+                      if (globals.customerInfoFields) 
+                       Text('Customer: ${orderDetails['customer_name']}'),
+                      if (globals.customerInfoFields) 
+                       Text('Customer Phone: ${orderDetails['customer_phone']}'),
+                      
+                      Text('Total: ${globals.currencySymbol}${orderDetails['total']}'),
                     ],
                   ),
                 ),

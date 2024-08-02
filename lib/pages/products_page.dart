@@ -25,7 +25,12 @@ class _ProductsPageState extends State<ProductsPage> {
         path.join(await getDatabasesPath(), 'inventory_app.db'),
       );
 
-      final List<Map<String, dynamic>> products = await database.query('products');
+      // get all the products that are visible
+      final List<Map<String, dynamic>> products = await database.query(
+        'products',
+        where: 'is_visible = ?',
+        whereArgs: [1],
+      );
 
       return List.generate(products.length, (index) {
         return Product(
@@ -60,7 +65,7 @@ class _ProductsPageState extends State<ProductsPage> {
       children: [
         Expanded(
           child: FutureBuilder<List<Product>>(
-            future: getProducts(),
+            future: productsListFuture,
             builder: (context, snapshot) {
               // if the connection is in progress, show a progress indicator else show the data
               if (snapshot.connectionState == ConnectionState.waiting) {

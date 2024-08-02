@@ -80,12 +80,35 @@ class _ProductEditPageState extends State<ProductEditPage> {
       path.join(await getDatabasesPath(), 'inventory_app.db'),
     );
 
+    // get the product info
+    final product = await database.query(
+      'products',
+      where: 'id = ?',
+      whereArgs: [widget.product.id],
+    );
+    // if no row in order_products, has the product, delete the product
+    final order_products = await database.query(
+      'order_products',
+      where: 'product_id = ?',
+      whereArgs: [widget.product.id],
+    );
+    if (order_products.isNotEmpty) {
+      print('Product has been ordered before. Cannot delete!');
+      await database.update(
+        'products',
+        <String, dynamic>{'visible': 0},
+        where: 'id = ?',
+        whereArgs: [widget.product.id],
+      );
+      return;
+    }
     await database.delete(
       'products',
       where: 'id = ?',
       whereArgs: [widget.product.id],
     );
-    print('Product deleted!');
+    
+    print('Product deleted! (essentially, visibility set to false)');
     Navigator.pop(context);
   }
 
