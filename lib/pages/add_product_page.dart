@@ -5,7 +5,7 @@ import 'package:inventory_app/models/product.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:inventory_app/utils/image_utils.dart' as imageUtils;
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -19,19 +19,20 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
-  // create an instance of ImagePicker
-  final ImagePicker _picker = ImagePicker();
-
   // store the selected image future
   Future<XFile?>? selectedImageFuture;
 
-  // store the path of the image
-  String _imgPath = '';
-
-  Future<void> _saveProduct(String imgPath) async {
+  Future<void> _saveProduct() async {
     final name = _nameController.text;
     final price = _priceController.text;
     final quantity = int.parse(_quantityController.text);
+    String imgPath = '';
+
+    // save the image and get the path
+    await imageUtils.saveImage(await selectedImageFuture).then((value) {
+      // print('Image saved: $value');
+      imgPath = value;
+    });
 
     final product = Product(
       name: name,
@@ -54,17 +55,6 @@ class _AddProductPageState extends State<AddProductPage> {
       Navigator.pop(context);
     }
   }
-  Future<XFile?> _selectImage(BuildContext context) async {
-    final image = await _picker.pickImage(source: ImageSource.gallery);
-    
-    return image;
-  }
-  Future<void> _saveImage(BuildContext context, XFile? image) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    File imgFile = File(path.join(appDocDir.path, image!.name));
-    imgFile.writeAsBytesSync(await image.readAsBytes());
-    _imgPath = imgFile.path;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,21 +73,43 @@ class _AddProductPageState extends State<AddProductPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // a button to select image
-              ElevatedButton(
-                onPressed: () async {
-                  // select image from gallery, is temporary
-                  // final image = await _picker.pickImage(source: ImageSource.gallery);
-                  setState(() {
-                    selectedImageFuture = _selectImage(context);
-                  });
-                  XFile? imageTemp = await selectedImageFuture;
-                  if (imageTemp != null) {
-                    _saveImage(context, imageTemp);
-                  }
-                  print(selectedImageFuture);
+              // a button to add image
+              ElevatedButton.icon(
+                onPressed: () {
+                  // image add option dropdown
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.camera_alt),
+                            title: const Text('Camera'),
+                            onTap: () {
+                              setState(() {
+                                selectedImageFuture = imageUtils.takeImage();
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.photo),
+                            title: const Text('Gallery'),
+                            onTap: () {
+                              setState(() {
+                                selectedImageFuture = imageUtils.selectImage();
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                  );
                 },
-                child: const Text('Select image'),
+                icon: const Icon(Icons.add_a_photo),
+                label: const Text('Add Image'),
               ),
               FutureBuilder(
                 future: selectedImageFuture,
@@ -140,7 +152,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: false),
               ),
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () {
                   print('Save button clicked!');
                   // input validation
@@ -152,9 +164,10 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                     return;
                   }
-                  _saveProduct(_imgPath);
+                  _saveProduct();
                 },
-                child: const Text('Save'),
+                icon: const Icon(Icons.save),
+                label: const Text('Save'),
               ),
             ],
           ),

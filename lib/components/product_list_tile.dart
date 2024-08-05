@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:inventory_app/main.dart';
 import 'package:inventory_app/models/product.dart';
-import 'package:inventory_app/pages/product_edit_page.dart';
+import 'package:inventory_app/pages/edit_product_page.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:inventory_app/globals.dart' as globals;

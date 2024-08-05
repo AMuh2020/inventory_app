@@ -5,10 +5,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
+import 'package:inventory_app/utils/image_utils.dart' as imageUtils;
 
 class ProductEditPage extends StatefulWidget {
-  ProductEditPage({super.key, required this.product});
+  const ProductEditPage({super.key, required this.product});
   final Product product;
 
   @override
@@ -22,35 +22,27 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   final TextEditingController _quantityController = TextEditingController();
 
-  // create an instance of ImagePicker
-  final ImagePicker _picker = ImagePicker();
-
   // store the selected image future
   Future<XFile?>? selectedImageFuture;
 
   // store the path of the image
   String _imgPath = ''; 
 
-  Future<XFile?> _selectImage(BuildContext context) async {
-    final image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      
-    });
-    return image;
-  }
-
-  Future<void> _saveImage(BuildContext context, XFile? image) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    File imgFile = File(path.join(appDocDir.path, image!.name));
-    imgFile.writeAsBytesSync(await image.readAsBytes());
-    _imgPath = imgFile.path;
-  }
+  bool _isImageChanged = false;
 
   Future<void> _saveProduct() async {
     final name = _nameController.text;
     final price = _priceController.text;
     final quantity = int.parse(_quantityController.text);
-    print('$name, $price, $quantity');
+    // String imgPath = '';
+
+    if (_isImageChanged) {
+      // save the image and get the path
+      await imageUtils.saveImage(await selectedImageFuture).then((value) {
+        // print('Image saved: $value');
+        _imgPath = value;
+      });
+    }
 
     // Create a new product object with the updated values
     final product = Product(
@@ -81,18 +73,18 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
 
     // get the product info
-    final product = await database.query(
-      'products',
-      where: 'id = ?',
-      whereArgs: [widget.product.id],
-    );
+    // final product = await database.query(
+    //   'products',
+    //   where: 'id = ?',
+    //   whereArgs: [widget.product.id],
+    // );
     // if no row in order_products, has the product, delete the product
-    final order_products = await database.query(
+    final orderProducts = await database.query(
       'order_products',
       where: 'product_id = ?',
       whereArgs: [widget.product.id],
     );
-    if (order_products.isNotEmpty) {
+    if (orderProducts.isNotEmpty) {
       print('Product has been ordered before. Cannot delete!');
       await database.update(
         'products',
@@ -144,15 +136,44 @@ class _ProductEditPageState extends State<ProductEditPage> {
         child: Column(
           children: [
             // a button to select an image
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  selectedImageFuture = _selectImage(context);
-                });
-                XFile? imageTemp = await selectedImageFuture;
-                _saveImage(context, imageTemp);
+            ElevatedButton.icon(
+              onPressed: () {
+                // image add option dropdown
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.camera_alt),
+                          title: const Text('Camera'),
+                          onTap: () {
+                            setState(() {
+                              selectedImageFuture = imageUtils.takeImage();
+                              _isImageChanged = true;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.photo),
+                          title: const Text('Gallery'),
+                          onTap: () {
+                            setState(() {
+                              selectedImageFuture = imageUtils.selectImage();
+                              _isImageChanged = true;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    );
+                  }
+                );
               },
-              child: const Text('Select Image'),
+              icon: const Icon(Icons.add_a_photo),
+              label: const Text('Change Image'),
             ),
             FutureBuilder(
               future: selectedImageFuture,

@@ -8,7 +8,7 @@
      To write all files until API level 29
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" /> -->
     <application
-        android:label="AMAL Simple Inventory Manager"
+        android:label="AMAL Inventory/Stock manager"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
