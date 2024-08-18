@@ -85,13 +85,14 @@ class _ProductEditPageState extends State<ProductEditPage> {
       whereArgs: [widget.product.id],
     );
     if (orderProducts.isNotEmpty) {
-      print('Product has been ordered before. Cannot delete!');
+      print('Product is in an order, set visibility to false');
       await database.update(
         'products',
-        <String, dynamic>{'visible': 0},
+        <String, dynamic>{'is_visible': 0},
         where: 'id = ?',
         whereArgs: [widget.product.id],
       );
+      Navigator.pop(context);
       return;
     }
     await database.delete(
@@ -131,100 +132,102 @@ class _ProductEditPageState extends State<ProductEditPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            // a button to select an image
-            ElevatedButton.icon(
-              onPressed: () {
-                // image add option dropdown
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ListTile(
-                          leading: const Icon(Icons.camera_alt),
-                          title: const Text('Camera'),
-                          onTap: () {
-                            setState(() {
-                              selectedImageFuture = imageUtils.takeImage();
-                              _isImageChanged = true;
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.photo),
-                          title: const Text('Gallery'),
-                          onTap: () {
-                            setState(() {
-                              selectedImageFuture = imageUtils.selectImage();
-                              _isImageChanged = true;
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              // a button to select an image
+              ElevatedButton.icon(
+                onPressed: () {
+                  // image add option dropdown
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.camera_alt),
+                            title: const Text('Camera'),
+                            onTap: () {
+                              setState(() {
+                                selectedImageFuture = imageUtils.takeImage();
+                                _isImageChanged = true;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.photo),
+                            title: const Text('Gallery'),
+                            onTap: () {
+                              setState(() {
+                                selectedImageFuture = imageUtils.selectImage();
+                                _isImageChanged = true;
+                              });
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                  );
+                },
+                icon: const Icon(Icons.add_a_photo),
+                label: const Text('Change Image'),
+              ),
+              FutureBuilder(
+                future: selectedImageFuture,
+                builder: (context, snapshot) {
+                  // print(snapshot.data);
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: Image.file(File(snapshot.data!.path)),
                     );
+                  } else if (widget.product.imagePath.isNotEmpty) {
+                    return SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: Image.file(File(widget.product.imagePath)),
+                    );
+                  } else {
+                    return const Text('No image selected');
                   }
-                );
-              },
-              icon: const Icon(Icons.add_a_photo),
-              label: const Text('Change Image'),
-            ),
-            FutureBuilder(
-              future: selectedImageFuture,
-              builder: (context, snapshot) {
-                // print(snapshot.data);
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return SizedBox(
-                    height: 200,
-                    width: 200,
-                    child: Image.file(File(snapshot.data!.path)),
-                  );
-                } else if (widget.product.imagePath.isNotEmpty) {
-                  return SizedBox(
-                    height: 200,
-                    width: 200,
-                    child: Image.file(File(widget.product.imagePath)),
-                  );
-                } else {
-                  return const Text('No image selected');
-                }
-              },
-            ),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Product Name'),
-            ),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Price'),
-            ),
-            TextFormField(
-              controller: _quantityController,
-              decoration: const InputDecoration(labelText: 'Quantity'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () async { 
-                print('Save button clicked!');
-                await _saveProduct();
-              },
-              icon: const Icon(Icons.save),
-              label: const Text('Save'),
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                print('Delete button clicked!');
-                _deleteProduct();
-              },
-              icon: const Icon(Icons.delete),
-              label: const Text('Delete'),
-            )
-          ],
+                },
+              ),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Product Name'),
+              ),
+              TextFormField(
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: 'Price'),
+              ),
+              TextFormField(
+                controller: _quantityController,
+                decoration: const InputDecoration(labelText: 'Quantity'),
+              ),
+              ElevatedButton.icon(
+                onPressed: () async { 
+                  print('Save button clicked!');
+                  await _saveProduct();
+                },
+                icon: const Icon(Icons.save),
+                label: const Text('Save'),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  print('Delete button clicked!');
+                  _deleteProduct();
+                },
+                icon: const Icon(Icons.delete),
+                label: const Text('Delete'),
+              )
+            ],
+          ),
         ),
       ),
     );

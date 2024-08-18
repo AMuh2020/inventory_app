@@ -48,7 +48,10 @@ class _OrderPageState extends State<OrderPage> {
       );
       final product = Map<String, dynamic>.from(product_query[0]);
       // print('PRO DUCT$product');
+      // for this page, we need to change the quantity to that of the product in the order
       product['quantity'] = orderProduct['quantity'];
+      // and the unit price to that of the product in the order at the time of sale
+      product['price'] = orderProduct['unit_price'];
       products.add(product);
       
     }
@@ -84,9 +87,9 @@ class _OrderPageState extends State<OrderPage> {
                       Text('${utils.formatTime(orderDetails['order_datetime'])}'),
                       Text('${utils.formatDate(orderDetails['order_datetime'])}'),
                       Text('Test: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
-                      if (globals.customerInfoFields) 
+                      if (globals.customerInfoFields && orderDetails['customer_name'] != null && orderDetails['customer_name'] != '') 
                        Text('Customer: ${orderDetails['customer_name']}'),
-                      if (globals.customerInfoFields) 
+                      if (globals.customerInfoFields && orderDetails['customer_phone'] != null && orderDetails['customer_phone'] != '') 
                        Text('Customer Phone: ${orderDetails['customer_phone']}'),
                       
                       Text('Total: ${globals.currencySymbol}${orderDetails['total']}'),
@@ -97,6 +100,7 @@ class _OrderPageState extends State<OrderPage> {
                   child: ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
+                      print(snapshot.data?[index]);
                       return ListTile(
                         leading: snapshot.data?[index]['image_path'] != null
                             ? Image.file(
@@ -107,7 +111,7 @@ class _OrderPageState extends State<OrderPage> {
                               )
                             : const Icon(Icons.image),
                         title: Text('Product: ${snapshot.data?[index]['name']}'),
-                        subtitle: Text('Quantity: ${snapshot.data?[index]['quantity']}'),
+                        subtitle: Text('Unit Price: ${snapshot.data?[index]['price']}, Quantity: ${snapshot.data?[index]['quantity']}'),
                       );
                     },
                   ),

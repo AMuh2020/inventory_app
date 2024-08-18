@@ -46,6 +46,7 @@ class _CartPageState extends State<CartPage> {
         'UPDATE products SET quantity = quantity - ? WHERE id = ?',
         [cartItem.quantity, cartItem.product.id],
       );
+      print(cartItem.product);
       // Create a new order_products record - linking the order and product
       await database.insert(
         'order_products',
@@ -53,6 +54,7 @@ class _CartPageState extends State<CartPage> {
           'order_id': order,
           'product_id': cartItem.product.id,
           'quantity': cartItem.quantity,
+          'unit_price': cartItem.product.price,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -108,21 +110,6 @@ class _CartPageState extends State<CartPage> {
                 itemCount: cart.products.length,
                 itemBuilder: (context, index) {
                   final cartItem = cart.products[index];
-                  // return ListTile(
-                  //   leading: SizedBox(
-                  //     width: 50,
-                  //     height: 50,
-                  //     child: product.imagePath.isNotEmpty ? Image.file(File(product.imagePath)) : Placeholder(),
-                  //   ),
-                  //   title: Text('${product.name} ${product.quantity > 1 ? 'x${product.quantity}' : ''}'),
-                  //   subtitle: Text('Price: ${product.price * product.quantity}'),
-                  //   trailing: IconButton(
-                  //     icon: const Icon(Icons.delete),
-                  //     onPressed: () {
-                  //       cart.removeProduct(product);
-                  //     },
-                  //   ),
-                  // );
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -148,7 +135,7 @@ class _CartPageState extends State<CartPage> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ), 
-                                    Text('Price: ${double.parse(cartItem.product.price) * cartItem.quantity}'),
+                                    Text('Price: ${globals.currencySymbol}${double.parse(cartItem.product.price) * cartItem.quantity}'),
                                   ],
                                 ),
                               ),
@@ -210,7 +197,7 @@ class _CartPageState extends State<CartPage> {
                 ),
               ],
             ),
-          ) :
+          ) : const SizedBox.shrink(),
         
         Text(
           'Total: ${globals.currencySymbol}${Provider.of<CartModel>(context).totalPrice}',
