@@ -1,14 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> 
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> 
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
-     To read all files until API level 32 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
-     To write all files until API level 29
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" /> -->
+    <!-- To read all files until API level 32 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- To write all files until API level 29 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.vending.BILLING" />
     <application
+        android:requestLegacyExternalStorage="true"
         android:label="AMAL Inventory/Stock manager"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">

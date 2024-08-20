@@ -3,6 +3,7 @@ import 'package:inventory_app/components/custom_drawer.dart';
 import 'package:inventory_app/pages/cart_page.dart';
 import 'package:inventory_app/pages/orders_page.dart';
 import 'package:inventory_app/pages/products_page.dart';
+import 'package:inventory_app/utils/export.dart';
 // import 'package:inventory_app/utils/export.dart';
 
 class MainPage extends StatefulWidget {
@@ -116,27 +117,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     } else if (_tabController.index == 2) {
       return [
         // export button
-        // IconButton(
-        //   icon: const Icon(Icons.download),
-        //   onPressed: () async {
-        //     print('Export button clicked!');
-        //     final result = await exportOrdersToCsv();
-        //     print(result);
-        //     if (result['success']) {
-        //       ScaffoldMessenger.of(context).showSnackBar(
-        //         const SnackBar(
-        //           content: Text('Orders exported successfully!'),
-        //         ),
-        //       );
-        //     } else {
-        //       ScaffoldMessenger.of(context).showSnackBar(
-        //         const SnackBar(
-        //           content: Text('Failed to export orders!'),
-        //         ),
-        //       );
-        //     }
-        //   },
-        // ),
+        IconButton(
+          icon: const Icon(Icons.download),
+          onPressed: () async {
+            print('Export button clicked!');
+            await writeEmptyCsv();
+            
+          },
+        ),
         // search button
         // IconButton(
         //   icon: const Icon(Icons.search),

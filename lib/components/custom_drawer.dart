@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_app/components/drawer_tile.dart';
+import 'package:inventory_app/components/premium_drawer_tile.dart';
 import 'package:inventory_app/pages/feedback_page.dart';
 import 'package:inventory_app/pages/settings_page.dart';
 
@@ -35,19 +36,7 @@ class CustomDrawer extends StatelessWidget {
           //   },
           // ),
           // settings
-          DrawerTile(
-            text: 'Settings',
-            icon: Icons.settings,
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsPage(),
-                ),
-              );
-            },
-          ),
+          PremiumDrawerTile(),
           DrawerTile(
             text: 'Feedback',
             icon: Icons.feedback,
@@ -57,6 +46,19 @@ class CustomDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const FeedbackPage(),
+                ),
+              );
+            },
+          ),
+          DrawerTile(
+            text: 'Settings',
+            icon: Icons.settings,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsPage(),
                 ),
               );
             },

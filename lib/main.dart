@@ -6,8 +6,10 @@ import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-// import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 
 // Future<void> requestPermissions() async {
@@ -31,6 +33,31 @@ void main() async {
   // await requestPermissions();
 
   await utils.settingsStartUp();
+
+  await MediaStore.ensureInitialized();
+  // From API 33, we request photos, audio, videos permission to read these files. This the new way
+  // From API 29, we request storage permission only to read access all files
+  // API lower than 30, we request storage permission to read & write access access all files
+
+  // For writing purpose, we are using [MediaStore] plugin. It will use MediaStore or java File based on API level.
+  // It will use MediaStore for writing files from API level 30 or use java File lower than 30
+  List<Permission> permissions = [
+    Permission.storage,
+  ];
+  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  final androidInfo = await deviceInfoPlugin.androidInfo;
+
+  if ((androidInfo.version.sdkInt) >= 33) {
+    permissions.add(Permission.photos);
+    permissions.add(Permission.audio);
+    permissions.add(Permission.videos);
+  }
+  
+  await permissions.request();
+  // we are not checking the status as it is an example app. You should (must) check it in a production app
+
+  // You have set this otherwise it throws AppFolderNotSetException
+  MediaStore.appFolder = "MediaStorePlugin";
 
   // utils.deleteDatabaseFile();
   // Open the database and store the reference.
