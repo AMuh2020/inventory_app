@@ -26,4 +26,19 @@ class DrawerTile extends StatelessWidget {
       onTap: onTap,
     );
   }
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Row(
+  //       children: [
+  //         Icon(
+  //           icon,
+  //           size: 30,
+  //         ),
+  //         Text(
+  //           text,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

@@ -5,21 +5,32 @@ import 'package:path/path.dart' as path;
 
 
 Future<XFile?> selectImage() async {
-  final ImagePicker picker = ImagePicker();
+  try {
+    final ImagePicker picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
     if (image == null) {
       return null;
     }
     return image;
+  } catch (e) {
+    print(e);
+    return null;
+  }
+  
   }
 
   Future<XFile?> takeImage() async {
-    final ImagePicker picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.camera);
-    if (image == null) {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.camera);
+      if (image == null) {
+        return null;
+      }
+      return image;
+    } catch (e) {
+      print(e);
       return null;
-    }
-    return image;
+  }
   }
 
   Future<String> saveImage(XFile? image) async {

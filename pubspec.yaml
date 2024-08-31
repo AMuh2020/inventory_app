@@ -1,7 +1,7 @@
 name: inventory_app
 description: "Inventory App by AMALWorks"
 publish_to: 'none'
-version: 0.0.1+4
+version: 1.0.1+6
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

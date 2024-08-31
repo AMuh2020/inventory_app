@@ -4,14 +4,14 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:inventory_app/utils/utils.dart' as utils;
 
-class OrdersPage extends StatefulWidget {
-  const OrdersPage({super.key});
+class SalesPage extends StatefulWidget {
+  const SalesPage({super.key});
 
   @override
-  State<OrdersPage> createState() => _OrdersPageState();
+  State<SalesPage> createState() => _SalesPageState();
 }
 
-class _OrdersPageState extends State<OrdersPage> {
+class _SalesPageState extends State<SalesPage> {
 
   Future<List<Map<String, dynamic>>> getOrders() async {
     print('Getting orders');
@@ -50,7 +50,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 }
                 if (snapshot.data?.isEmpty ?? true) {
                   return const Center(
-                    child: Text('No orders found, start making sales to create orders'),
+                    child: Text('No sales found, start making sales to create sales'),
                   );
                 }
                 return ListView.builder(
@@ -66,7 +66,7 @@ class _OrdersPageState extends State<OrdersPage> {
                         );
                       },
                       child: ListTile(
-                        title: Text('Order #${snapshot.data?[index]['id']}'),
+                        title: Text('Sale ID: #${snapshot.data?[index]['id']}'),
                         subtitle: Text('${utils.formatDateTime(snapshot.data?[index]['datetime'])}'),
                         trailing: const Icon(Icons.arrow_forward ),
                       ),

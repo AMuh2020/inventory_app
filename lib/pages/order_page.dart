@@ -46,6 +46,7 @@ class _OrderPageState extends State<OrderPage> {
         where: 'id = ?',
         whereArgs: [orderProduct['product_id']],
       );
+      print(product_query);
       final product = Map<String, dynamic>.from(product_query[0]);
       // print('PRO DUCT$product');
       // for this page, we need to change the quantity to that of the product in the order
@@ -62,7 +63,7 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Details'),
+        title: const Text('Sale Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -79,14 +80,14 @@ class _OrderPageState extends State<OrderPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Order #${widget.orderId}'),
+                      Text('Sale #${widget.orderId}'),
                       Text('${utils.formatTime(orderDetails['order_datetime'])}'),
                       Text('${utils.formatDate(orderDetails['order_datetime'])}'),
-                      Text('Test: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
+                      Text('Date: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
                       if (globals.customerInfoFields && orderDetails['customer_name'] != null && orderDetails['customer_name'] != '') 
                        Text('Customer: ${orderDetails['customer_name']}'),
                       if (globals.customerInfoFields && orderDetails['customer_phone'] != null && orderDetails['customer_phone'] != '') 
@@ -102,7 +103,7 @@ class _OrderPageState extends State<OrderPage> {
                     itemBuilder: (context, index) {
                       print(snapshot.data?[index]);
                       return ListTile(
-                        leading: snapshot.data?[index]['image_path'] != null
+                        leading: (snapshot.data?[index]['image_path'] != null && snapshot.data?[index]['image_path'] != '')
                             ? Image.file(
                                 File(snapshot.data?[index]['image_path']),
                                 width: 50,
@@ -168,7 +169,7 @@ class _OrderPageState extends State<OrderPage> {
                         );
                       },
                       icon: const Icon(Icons.delete),
-                      label: const Text('Delete Order'),
+                      label: const Text('Delete Sale'),
                     ),
                   ),
                 ),

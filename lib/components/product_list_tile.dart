@@ -40,16 +40,15 @@ class ProductListTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  product.imagePath.isNotEmpty ?
                   SizedBox(
                     width: 80,
                     height: 80,
-                    child: product.imagePath.isNotEmpty 
-                      ? Image.file(
-                          File(product.imagePath),
-                          // fit: BoxFit.cover,
-                        ) 
-                      : const Placeholder() // Or any other placeholder widget,
-                  ),
+                    child: Image.file(
+                      File(product.imagePath),
+                        // fit: BoxFit.cover,
+                      ) 
+                  ) : const SizedBox(),
                   const SizedBox(width: 7),
                   Expanded(
                     child: Row(

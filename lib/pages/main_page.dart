@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_app/components/custom_drawer.dart';
 import 'package:inventory_app/pages/cart_page.dart';
-import 'package:inventory_app/pages/orders_page.dart';
+import 'package:inventory_app/pages/sales_page.dart';
 import 'package:inventory_app/pages/products_page.dart';
 import 'package:inventory_app/utils/export.dart';
 // import 'package:inventory_app/utils/export.dart';
@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   final List<String> _titles = const [
     'Products',
     'Sell',
-    'Orders',
+    'Sales',
   ];
 
   late String _title;
@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               ),
               Tab(
                 icon: Icon(Icons.list),
-                text: 'Orders',
+                text: 'Sales',
               ),
             ],
           ),
@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
             children: const  [
               ProductsPage(),
               CartPage(),
-              OrdersPage(),
+              SalesPage(),
             ],
           )
         );
@@ -117,14 +117,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     } else if (_tabController.index == 2) {
       return [
         // export button
-        IconButton(
-          icon: const Icon(Icons.download),
-          onPressed: () async {
-            print('Export button clicked!');
-            await writeEmptyCsv();
+        // IconButton(
+        //   icon: const Icon(Icons.download),
+        //   onPressed: () async {
+        //     print('Export button clicked!');
+        //     await writeOrdersCsv();
             
-          },
-        ),
+        //   },
+        // ),
         // search button
         // IconButton(
         //   icon: const Icon(Icons.search),

@@ -53,8 +53,9 @@ void main() async {
     permissions.add(Permission.videos);
   }
   
-  await permissions.request();
-  // we are not checking the status as it is an example app. You should (must) check it in a production app
+  final status = await permissions.request();
+  print(status);
+  
 
   // You have set this otherwise it throws AppFolderNotSetException
   MediaStore.appFolder = "MediaStorePlugin";

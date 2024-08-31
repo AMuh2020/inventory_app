@@ -28,6 +28,13 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+dependencies {
+    def billingVersion = "7.0.0"
+
+    implementation "com.android.billingclient:billing:$billingVersion"
+}
+
+
 android {
     namespace = "com.example.inventory_app"
     compileSdk = flutter.compileSdkVersion

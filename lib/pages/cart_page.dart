@@ -117,7 +117,7 @@ class _CartPageState extends State<CartPage> {
                         SizedBox(
                           width: 50,
                           height: 50,
-                          child: cartItem.product.imagePath.isNotEmpty ? Image.file(File(cartItem.product.imagePath)) : const Placeholder(),
+                          child: cartItem.product.imagePath.isNotEmpty ? Image.file(File(cartItem.product.imagePath)) : const Icon(Icons.image),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -230,7 +230,7 @@ class _CartPageState extends State<CartPage> {
             }
             _sellProducts();
           },
-          child: const Text('Sell'),
+          child: const Text('Make sale'),
         ),
       ],
     );

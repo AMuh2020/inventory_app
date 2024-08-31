@@ -3,6 +3,7 @@ import 'package:inventory_app/components/drawer_tile.dart';
 import 'package:inventory_app/components/premium_drawer_tile.dart';
 import 'package:inventory_app/pages/feedback_page.dart';
 import 'package:inventory_app/pages/settings_page.dart';
+import 'package:inventory_app/globals.dart' as globals;
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -36,7 +37,8 @@ class CustomDrawer extends StatelessWidget {
           //   },
           // ),
           // settings
-          PremiumDrawerTile(),
+          // PremiumDrawerTile(),
+          const Spacer(),
           DrawerTile(
             text: 'Feedback',
             icon: Icons.feedback,
@@ -63,10 +65,10 @@ class CustomDrawer extends StatelessWidget {
               );
             },
           ),
-          const Spacer(),
-          const Text(
-            'Version 1.0.0',
-            style: TextStyle(
+          const SizedBox(height: 10),
+          Text(
+            'Version ${globals.version}',
+            style: const TextStyle(
               color: Colors.grey,
               fontSize: 16,
             ),

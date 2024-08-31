@@ -18,6 +18,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  bool imageSelected = false;
 
   // store the selected image future
   Future<XFile?>? selectedImageFuture;
@@ -27,13 +28,15 @@ class _AddProductPageState extends State<AddProductPage> {
     final price = _priceController.text;
     final quantity = int.parse(_quantityController.text);
     String imgPath = '';
-
-    // save the image and get the path
-    await imageUtils.saveImage(await selectedImageFuture).then((value) {
-      // print('Image saved: $value');
-      imgPath = value;
-    });
-
+    if (imageSelected) {
+      // save the image and get the path
+      await imageUtils.saveImage(await selectedImageFuture).then((value) {
+        // print('Image saved: $value');
+        imgPath = value;
+      });
+    }
+    
+    print(imgPath);
     final product = Product(
       name: name,
       price: price,
@@ -89,6 +92,9 @@ class _AddProductPageState extends State<AddProductPage> {
                             onTap: () {
                               setState(() {
                                 selectedImageFuture = imageUtils.takeImage();
+                                if (selectedImageFuture != null) {
+                                  imageSelected = true;
+                                }
                               });
                               Navigator.pop(context);
                             },
@@ -99,6 +105,9 @@ class _AddProductPageState extends State<AddProductPage> {
                             onTap: () {
                               setState(() {
                                 selectedImageFuture = imageUtils.selectImage();
+                                if (selectedImageFuture != null) {
+                                  imageSelected = true;
+                                }
                               });
                               Navigator.pop(context);
                             },
@@ -119,6 +128,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     if (snapshot.data == null) {
                       return const Text('No image selected');
                     }
+                    
                     return SizedBox(
                       height: 200,
                       width: 200,
@@ -152,6 +162,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: false),
               ),
+              SizedBox(height: 10,),
               ElevatedButton.icon(
                 onPressed: () {
                   print('Save button clicked!');
