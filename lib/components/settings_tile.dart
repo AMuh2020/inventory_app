@@ -5,12 +5,14 @@ class SettingsTile extends StatefulWidget {
   final String helperText;
   final IconData icon;
   final Widget trailing;
+  final void Function() onTap;
   const SettingsTile({
     super.key,
     required this.text,
     required this.helperText,
     required this.icon,
     required this.trailing,
+    required this.onTap,
   });
 
   @override
@@ -30,6 +32,7 @@ class _SettingsTileState extends State<SettingsTile> {
         size: 30,
       ),
       trailing: widget.trailing,
+      onTap: widget.onTap,
     );
   }
 }

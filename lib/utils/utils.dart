@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory_app/globals.dart' as globals;
+import 'package:flutter/material.dart';
 
 Future settingsStartUp() async {
   print('Starting up, loading settings');
@@ -13,8 +14,7 @@ Future settingsStartUp() async {
   // Check if the dark mode key exists
   if (!prefs.containsKey('darkMode')) {
     // If it doesn't exist, set it to false
-    prefs.setBool('darkMode', false);
-    globals.darkMode = false;
+    prefs.setBool('darkMode', globals.defaults['darkMode']);
   } else {
     print('Dark mode key exists');
     print('Dark mode value: ${prefs.getBool('darkMode')}');
@@ -25,8 +25,7 @@ Future settingsStartUp() async {
   // Check if the customer info fields key exists
   if (!prefs.containsKey('customerInfoFields')) {
     // If it doesn't exist, set it to false
-    prefs.setBool('customerInfoFields', false);
-    globals.customerInfoFields = false;
+    prefs.setBool('customerInfoFields', globals.defaults['customerInfoFields']);
   } else {
     print('Customer info fields key exists');
     print('Customer info fields value: ${prefs.getBool('customerInfoFields')}');
@@ -37,22 +36,30 @@ Future settingsStartUp() async {
   // Check if the currency symbol key exists
   if (!prefs.containsKey('currencySymbol')) {
     // If it doesn't exist, set it to the default currency symbol
-    prefs.setString('currencySymbol', '\$');
-    globals.currencySymbol = '\$';
+    prefs.setString('currencySymbol', globals.defaults['currencySymbol']);
+    globals.currencySymbol = globals.defaults['currencySymbol'];
   } else {
     print('Currency symbol key exists');
     print('Currency symbol value: ${prefs.getString('currencySymbol')}');
     // If it does exist, set the currency symbol to the value in the shared preferences
     globals.currencySymbol = prefs.getString('currencySymbol')!;
   }
-
-  // not implemented yet
+  
   // Check if the theme color key exists
   // if (!prefs.containsKey('themeColor')) {
   //   // If it doesn't exist, set it to the default color
   //   prefs.setInt('themeColor', 0xFF2196F3);
   // }
   print('Settings loaded');
+}
+
+Color hexToColor(String hexString) {
+  hexString = hexString.replaceFirst('#', '').replaceFirst('0x', '');
+  if (hexString.length == 6) {
+    hexString = 'FF' + hexString; // Add alpha value if not provided
+  }
+  print('Hex to color: $hexString');
+  return Color(int.parse(hexString, radix: 16));
 }
 
 void toggleCustomerInfoFields(bool customerInfoField) async {

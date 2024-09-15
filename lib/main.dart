@@ -10,22 +10,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-
-
-// Future<void> requestPermissions() async {
-//   // PermissionStatus status = await Permission.manageExternalStorage.status;
-  
-//   // print('Storage permission status: $status');
-//   // if (status.isDenied || status.isPermanentlyDenied ) {
-//   //   status = await Permission.manageExternalStorage.request();
-//   //   print('Storage permission status2: $status');
-//   // }
-
-//   // if (!status.isGranted) {
-//   //   // Handle the case where the permission is not granted
-//   //   print('Storage permission denied');
-//   // }
-// }
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +33,7 @@ void main() async {
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final androidInfo = await deviceInfoPlugin.androidInfo;
 
+  // android permissions
   if ((androidInfo.version.sdkInt) >= 33) {
     permissions.add(Permission.photos);
     permissions.add(Permission.audio);
@@ -55,7 +42,6 @@ void main() async {
   
   final status = await permissions.request();
   print(status);
-  
 
   // You have set this otherwise it throws AppFolderNotSetException
   MediaStore.appFolder = "MediaStorePlugin";
@@ -179,6 +165,7 @@ class CartModel extends ChangeNotifier {
     }
     return 0;
   }
+  int get totalCartItems => _cart.fold(0, (total, current) => total + current.quantity);
 
   // Get the list of products in the cart
   List<CartItem> get products => _cart;

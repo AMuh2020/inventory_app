@@ -3,8 +3,6 @@ import 'package:inventory_app/globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  Color seedColor = Colors.purple;
-
   ThemeProvider() {
     darkMode = ThemeData(
       // brightness: Brightness.dark,
@@ -33,7 +31,11 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get themeData => _themeData;
 
+  // get the dark mode value from the globals
   bool get isDarkMode => globals.darkMode;
+
+  // get the seed color from the globals
+  Color get seedColor => globals.seedColor;
 
   void toggleTheme() {
     savePrefs();
@@ -50,18 +52,21 @@ class ThemeProvider extends ChangeNotifier {
     prefs.setBool('darkMode', isDarkMode);
   }
   void changeSeedColor(Color newColor) {
+    
+    print('Changing seed color to $newColor');
+    globals.seedColor = newColor;
     darkMode = ThemeData(
-      brightness: Brightness.dark,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
+        brightness: Brightness.dark,
         seedColor: newColor,
       ),
     );
 
     lightMode = ThemeData(
-      brightness: Brightness.light,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
+        brightness: Brightness.light,
         seedColor: newColor,
       ),
     );

@@ -4,6 +4,9 @@ import 'package:inventory_app/pages/cart_page.dart';
 import 'package:inventory_app/pages/sales_page.dart';
 import 'package:inventory_app/pages/products_page.dart';
 import 'package:inventory_app/utils/export.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+import 'package:inventory_app/main.dart';
 // import 'package:inventory_app/utils/export.dart';
 
 class MainPage extends StatefulWidget {
@@ -38,6 +41,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  int totalItemsInCart(BuildContext context) {
+    final cart = Provider.of<CartModel>(context);
+    // get the quantity of the product using the product id
+    return cart.totalCartItems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -65,13 +74,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           ),
           bottomNavigationBar: TabBar(
             controller: _tabController,
-            tabs: const [
+            tabs: [
               Tab(
                 icon: Icon(Icons.inventory),
                 text: 'Products',
               ),
               Tab(
-                icon: Icon(Icons.point_of_sale),
+                icon: badges.Badge(
+                    showBadge: totalItemsInCart(context) > 0,
+                    badgeStyle: badges.BadgeStyle(
+                      badgeColor: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                    badgeContent: Text('${totalItemsInCart(context)}'),
+                    child: const Icon(Icons.point_of_sale),
+                  ),
                 text: 'Sell',
               ),
               Tab(
@@ -107,8 +123,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         //     print('Search button clicked!');
         //     // add search functionality
         //     // a dropdown showing the search bar
-
-
         //   },
         // ),
       ];

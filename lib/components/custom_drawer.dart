@@ -29,16 +29,15 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           // analytics - not implemented, for next update
-          // DrawerTile(
-          //   text: 'Analytics',
-          //   icon: Icons.analytics,
-          //   onTap: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          // settings
-          // PremiumDrawerTile(),
+          DrawerTile(
+            text: 'Analytics',
+            icon: Icons.analytics,
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
           const Spacer(),
+          PremiumDrawerTile(),
           DrawerTile(
             text: 'Feedback',
             icon: Icons.feedback,

@@ -6,6 +6,7 @@ import 'package:inventory_app/themes/theme_provider.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:provider/provider.dart';
 import 'package:inventory_app/globals.dart' as globals;
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -14,7 +15,11 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
+
+
 class _SettingsPageState extends State<SettingsPage> {
+  Color pickerColor = Color(0xff443a49);
+  Color currentColor = Color(0xff443a49);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +52,23 @@ class _SettingsPageState extends State<SettingsPage> {
                 });
               },
             ),
+            onTap: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+              setState(() {
+                // toggle the value
+                globals.darkMode = !globals.darkMode;
+              });
+            },
+          ),
+          SettingsTile(
+            text: 'Color Theme',
+            helperText: 'Select the color theme',
+            icon: Icons.color_lens,
+            trailing: SizedBox(),
+            onTap: () {
+              // show color picker
+              _colorpickDialog(context);
+            },
           ),
           // currency symbol
           SettingsTile(
@@ -70,13 +92,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 }).toList(),
               ),
             ),
+            onTap: () => {},
           ),
-          // color picker for theme
-          // const SettingsTile(
-          //   text: 'Theme Color',
-          //   icon: Icons.color_lens,
-          //   button: const Icon(Icons.arrow_forward),
-          // ),
           // SettingsTile(
           //   text: 'Reset Settings',
           //   icon: Icons.settings_backup_restore,
@@ -99,18 +116,17 @@ class _SettingsPageState extends State<SettingsPage> {
                 utils.toggleCustomerInfoFields(globals.customerInfoFields);
               },
             ),
+            onTap: () => {},
           ),
           // delete all data
           SettingsTile(
             text: 'Delete All Data',
             helperText: 'Delete all data from the app',
             icon: Icons.delete_forever,
-            trailing: IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: () {
-                _deleteDialog();
-              },
-            ),
+            trailing: SizedBox(),
+            onTap: () {
+              _deleteDialog();
+            },
           ),
           // Center(
           //   child: ElevatedButton(
@@ -124,6 +140,34 @@ class _SettingsPageState extends State<SettingsPage> {
           // )
         ],
       )
+    );
+  }
+  void _colorpickDialog (BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pick a color!'),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor: pickerColor,
+              onColorChanged: (Color color) {
+                print(color);
+                Provider.of<ThemeProvider>(context, listen: false).changeSeedColor(color);
+              },
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('Got it'),
+              onPressed: () {
+                print('picked color: $currentColor');
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
     );
   }
   void _deleteDialog () {
