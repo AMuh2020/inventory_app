@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:inventory_app/pages/main_page.dart';
-import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:inventory_app/utils/date_utils.dart' as date_utils;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:inventory_app/globals.dart' as globals;
@@ -85,9 +85,9 @@ class _OrderPageState extends State<OrderPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Sale #${widget.orderId}'),
-                      Text('${utils.formatTime(orderDetails['order_datetime'])}'),
-                      Text('${utils.formatDate(orderDetails['order_datetime'])}'),
-                      Text('Date: ${utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
+                      Text('${date_utils.formatTime(orderDetails['order_datetime'])}'),
+                      Text('${date_utils.formatDate(orderDetails['order_datetime'])}'),
+                      Text('Date: ${date_utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
                       if (globals.customerInfoFields && orderDetails['customer_name'] != null && orderDetails['customer_name'] != '') 
                        Text('Customer: ${orderDetails['customer_name']}'),
                       if (globals.customerInfoFields && orderDetails['customer_phone'] != null && orderDetails['customer_phone'] != '') 

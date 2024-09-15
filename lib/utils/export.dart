@@ -6,7 +6,7 @@
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
-import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:inventory_app/utils/date_utils.dart' as date_utils;
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -33,7 +33,7 @@ Future<String> exportOrdersToCsv() async {
       }
       ordersList.add({
         'order_id': order['id'],
-        'order_datetime': utils.formatDateTime(order['order_datetime'].toString()),
+        'order_datetime': date_utils.formatDateTime(order['order_datetime'].toString()),
         'customer_name': order['customer_name'] ?? 'N/A',
         'customer_phone': order['customer_phone'] ?? 'N/A',
         'total': order['total'],

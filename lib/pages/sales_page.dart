@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory_app/pages/order_page.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
-import 'package:inventory_app/utils/utils.dart' as utils;
+import 'package:inventory_app/utils/date_utils.dart' as date_utils;
 
 class SalesPage extends StatefulWidget {
   const SalesPage({super.key});
@@ -67,7 +67,7 @@ class _SalesPageState extends State<SalesPage> {
                       },
                       child: ListTile(
                         title: Text('Sale ID: #${snapshot.data?[index]['id']}'),
-                        subtitle: Text('${utils.formatDateTime(snapshot.data?[index]['datetime'])}'),
+                        subtitle: Text('${date_utils.formatDateTime(snapshot.data?[index]['datetime'])}'),
                         trailing: const Icon(Icons.arrow_forward ),
                       ),
                     );
