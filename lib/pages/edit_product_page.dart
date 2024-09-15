@@ -65,6 +65,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     
     print('Product saved!');
     Navigator.pop(context);
+    await database.close();
   }
 
   Future<void> _deleteProduct() async {
@@ -103,6 +104,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     
     print('Product deleted! (essentially, visibility set to false)');
     Navigator.pop(context);
+    await database.close();
   }
 
   @override

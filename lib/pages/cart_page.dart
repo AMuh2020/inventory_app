@@ -73,6 +73,7 @@ class _CartPageState extends State<CartPage> {
         content: Text('Order placed!'),
       ),
     );
+    await database.close();
   }
 
   @override

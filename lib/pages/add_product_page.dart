@@ -53,6 +53,7 @@ class _AddProductPageState extends State<AddProductPage> {
       product.toMapForDB(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    await database.close();
     print('Product saved!');
     if (mounted) {
       Navigator.pop(context);

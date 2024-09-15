@@ -25,7 +25,7 @@ class _SalesPageState extends State<SalesPage> {
       orderBy: 'order_datetime DESC',
     );
     print(orders);
-    
+    await database.close();
     return List.generate(orders.length, (index) {
       return {
         'id': orders[index]['id'],
