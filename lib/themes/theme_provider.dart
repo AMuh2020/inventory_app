@@ -38,7 +38,7 @@ class ThemeProvider extends ChangeNotifier {
   Color get seedColor => globals.seedColor;
 
   void toggleTheme() {
-    savePrefs();
+    saveIsDarkMode();
     if (isDarkMode) {
       _themeData = lightMode;
     } else {
@@ -47,12 +47,12 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
   // save the shared preferences
-  void savePrefs() async {
+  void saveIsDarkMode() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('darkMode', isDarkMode);
   }
   void changeSeedColor(Color newColor) {
-    
+    saveSeedColor();
     print('Changing seed color to $newColor');
     globals.seedColor = newColor;
     darkMode = ThemeData(
@@ -73,5 +73,10 @@ class ThemeProvider extends ChangeNotifier {
 
     _themeData = isDarkMode ? darkMode : lightMode;
     notifyListeners();
+  }
+  void saveSeedColor() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('themeColor', globals.hexSeedColor);
+    print('shared preferences saved: ${prefs.getString('themeColor')}');
   }
 }

@@ -18,8 +18,8 @@ class SettingsPage extends StatefulWidget {
 
 
 class _SettingsPageState extends State<SettingsPage> {
-  Color pickerColor = Color(0xff443a49);
-  Color currentColor = Color(0xff443a49);
+  Color pickerColor = globals.seedColor;
+  Color currentColor = globals.seedColor;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,10 +94,18 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             onTap: () => {},
           ),
+          // reset settings
           // SettingsTile(
           //   text: 'Reset Settings',
+          //   helperText: 'Reset all settings to default',
           //   icon: Icons.settings_backup_restore,
-          //   button: const Icon(Icons.arrow_forward),
+          //   trailing: SizedBox(),
+          //   onTap: () {
+          //     // reset settings
+          //     utils.resetSettings();
+          //     // rebuild the page
+          //     setState(() {});
+          //   },
           // ),
           // customer info fields toggle
           SettingsTile(
@@ -154,6 +162,10 @@ class _SettingsPageState extends State<SettingsPage> {
               onColorChanged: (Color color) {
                 print(color);
                 Provider.of<ThemeProvider>(context, listen: false).changeSeedColor(color);
+                setState(() {
+                  currentColor = color;
+                  globals.hexSeedColor = utils.colorToHexString(color);
+                });
               },
             ),
           ),

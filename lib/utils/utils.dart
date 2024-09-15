@@ -14,42 +14,63 @@ Future settingsStartUp() async {
   // Check if the dark mode key exists
   if (!prefs.containsKey('darkMode')) {
     // If it doesn't exist, set it to false
+    print('Dark mode key does not exist');
     prefs.setBool('darkMode', globals.defaults['darkMode']);
   } else {
     print('Dark mode key exists');
     print('Dark mode value: ${prefs.getBool('darkMode')}');
     // If it does exist, set the dark mode to the value in the shared preferences
-    globals.darkMode = prefs.getBool('darkMode')!;
+    globals.darkMode = prefs.getBool('darkMode') ?? false;
   }
   
   // Check if the customer info fields key exists
   if (!prefs.containsKey('customerInfoFields')) {
     // If it doesn't exist, set it to false
+    print('Customer info fields key does not exist');
     prefs.setBool('customerInfoFields', globals.defaults['customerInfoFields']);
   } else {
     print('Customer info fields key exists');
     print('Customer info fields value: ${prefs.getBool('customerInfoFields')}');
     // If it does exist, set the customer info fields to the value in the shared preferences
-    globals.customerInfoFields = prefs.getBool('customerInfoFields')!;
-
+    globals.customerInfoFields = prefs.getBool('customerInfoFields') ?? false;
   }
   // Check if the currency symbol key exists
   if (!prefs.containsKey('currencySymbol')) {
     // If it doesn't exist, set it to the default currency symbol
+    print('Currency symbol key does not exist');
     prefs.setString('currencySymbol', globals.defaults['currencySymbol']);
-    globals.currencySymbol = globals.defaults['currencySymbol'];
   } else {
     print('Currency symbol key exists');
     print('Currency symbol value: ${prefs.getString('currencySymbol')}');
     // If it does exist, set the currency symbol to the value in the shared preferences
     globals.currencySymbol = prefs.getString('currencySymbol')!;
   }
-  
-  // Check if the theme color key exists
-  // if (!prefs.containsKey('themeColor')) {
-  //   // If it doesn't exist, set it to the default color
-  //   prefs.setInt('themeColor', 0xFF2196F3);
-  // }
+
+  // Check if the seed color key exists
+  if (!prefs.containsKey('themeColor')) {
+    // If it doesn't exist, set it to the default color
+    print('theme color key does not exist');
+    prefs.setString('themeColor', globals.defaults['seedColor']);
+  } else {
+    print('theme color key exists');
+    print('theme color value: ${prefs.getString('themeColor')}');
+    // If it does exist, set the seed color to the value in the shared preferences
+    globals.hexSeedColor = prefs.getString('themeColor')!;
+    globals.seedColor = hexToColor(globals.hexSeedColor);
+  }
+
+  // check if the user has premium
+  if (!prefs.containsKey('hasPremium')) {
+    // If it doesn't exist, set it to false
+    print('hasPremium key does not exist');
+    prefs.setBool('hasPremium', globals.defaults['hasPremium']);
+  } else {
+    print('hasPremium key exists');
+    print('hasPremium value: ${prefs.getBool('hasPremium')}');
+    // If it does exist, set the has premium to the value in the shared preferences
+    globals.hasPremium = prefs.getBool('hasPremium') ?? false;
+  }
+
   print('Settings loaded');
 }
 
@@ -60,6 +81,9 @@ Color hexToColor(String hexString) {
   }
   print('Hex to color: $hexString');
   return Color(int.parse(hexString, radix: 16));
+}
+String colorToHexString(Color color) {
+  return '0x${color.value.toRadixString(16).padLeft(8, '0')}';
 }
 
 void toggleCustomerInfoFields(bool customerInfoField) async {

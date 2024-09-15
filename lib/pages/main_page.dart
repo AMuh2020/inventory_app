@@ -130,15 +130,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       return [];
     } else if (_tabController.index == 2) {
       return [
-        // export button
-        // IconButton(
-        //   icon: const Icon(Icons.download),
-        //   onPressed: () async {
-        //     print('Export button clicked!');
-        //     await writeOrdersCsv();
-            
-        //   },
-        // ),
+        // export button - premium feature
+        Tooltip(
+          message: 'Export sales data to CSV',
+          child: ElevatedButton.icon(
+            label: const Text('Export'),
+            icon: const Icon(Icons.download),
+            iconAlignment: IconAlignment.end,
+            onPressed: () async {
+              print('Export button clicked!');
+              // export sales data to csv
+              await writeOrdersCsv();
+            },
+          ),
+        ),
         // search button
         // IconButton(
         //   icon: const Icon(Icons.search),
