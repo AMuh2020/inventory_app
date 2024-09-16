@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_app/components/drawer_tile.dart';
-import 'package:inventory_app/components/premium_drawer_tile.dart';
+import 'package:inventory_app/pages/analytics_page.dart';
 import 'package:inventory_app/pages/feedback_page.dart';
+import 'package:inventory_app/pages/get_premium_page.dart';
 import 'package:inventory_app/pages/settings_page.dart';
 import 'package:inventory_app/globals.dart' as globals;
 
@@ -29,20 +30,36 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           // analytics - not implemented, for next update
+          if (globals.hasPremium)
+            DrawerTile(
+              text: 'Analytics',
+              icon: Icons.analytics,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AnalyticsPage(),
+                  ),
+                );
+              },
+            ),
+          const Spacer(),
+          // premium drawer tile
           DrawerTile(
-            text: 'Analytics',
-            icon: Icons.analytics,
+            text: 'Premium',
+            icon: Icons.star,
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context,
+              MaterialPageRoute(
+                builder: (context) => const GetPremiumPage(),
+              ),
+            );
             },
           ),
-          const Spacer(),
-          PremiumDrawerTile(),
           DrawerTile(
             text: 'Feedback',
             icon: Icons.feedback,
             onTap: () {
-              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -55,7 +72,6 @@ class CustomDrawer extends StatelessWidget {
             text: 'Settings',
             icon: Icons.settings,
             onTap: () {
-              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -66,7 +82,7 @@ class CustomDrawer extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Version ${globals.version}',
+            'Version ${globals.defaults['version']}',
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 16,

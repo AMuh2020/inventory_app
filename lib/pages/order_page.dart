@@ -56,6 +56,7 @@ class _OrderPageState extends State<OrderPage> {
       products.add(product);
       
     }
+    await database.close();
     return products;
   }
 
@@ -160,6 +161,7 @@ class _OrderPageState extends State<OrderPage> {
                                       MaterialPageRoute(builder: (context) => const MainPage()),
                                       (route) => false,
                                     );
+                                    await database.close();
                                   },
                                   child: const Text('Delete'),
                                 ),

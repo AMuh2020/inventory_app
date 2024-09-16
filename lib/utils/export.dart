@@ -40,7 +40,7 @@ Future<String> exportOrdersToCsv() async {
         'products': orderProductsMap,
       });
     }
-    
+    await database.close();
     return 'order_id,order_datetime,customer_name,customer_phone,total,products\n' 
     + ListToCsvConverter().convert(ordersList.map((order) => order.values.toList()).toList());
 }

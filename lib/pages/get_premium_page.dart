@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_app/components/drawer_tile.dart';
-import 'dart:io';
 import 'dart:async';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:inventory_app/globals.dart' as globals;
+import 'dart:io';
+import 'package:inventory_app/utils/utils.dart' as utils;
 
+  
 
-final bool _kAutoConsume = Platform.isIOS || true;
-
-const String _kpremiumID = 'premium_one_time';
-const List<String> _kProductIds = <String>[
-  _kpremiumID,
-];
-
-class PremiumDrawerTile extends StatefulWidget {
-  const PremiumDrawerTile({super.key});
+class GetPremiumPage extends StatefulWidget {
+  const GetPremiumPage({super.key});
 
   @override
-  State<PremiumDrawerTile> createState() => _PremiumDrawerTileState();
+  State<GetPremiumPage> createState() => _GetPremiumPageState();
 }
 
-class _PremiumDrawerTileState extends State<PremiumDrawerTile> {
+class _GetPremiumPageState extends State<GetPremiumPage> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   final List _products = [];
   ProductDetails? _productDetails;
+  String price = '';
+
+  final bool _kAutoConsume = Platform.isIOS || true;
+
+  static const String _kpremiumID = 'premium_one_time';
+  static const List<String> _kProductIds = <String>[
+    _kpremiumID,
+  ];
+
 
   @override
   void initState() {
@@ -64,11 +68,7 @@ class _PremiumDrawerTileState extends State<PremiumDrawerTile> {
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
                   purchaseDetails.status == PurchaseStatus.restored) {
           // bool valid = await _verifyPurchase(purchaseDetails);
-          // if (valid) {
-          //   _deliverProduct(purchaseDetails);
-          // } else {
-          //   _handleInvalidPurchase(purchaseDetails);
-          // }
+          utils.grantPremium();
         }
         if (purchaseDetails.pendingCompletePurchase) {
           print('pending complete purchase');
@@ -93,6 +93,9 @@ class _PremiumDrawerTileState extends State<PremiumDrawerTile> {
     }
     if (productDetailResponse.productDetails.isNotEmpty) {
       _productDetails = productDetailResponse.productDetails.first;
+      setState(() {
+        price = _productDetails!.price;
+      });
       print('Product id: ${_productDetails!.id}');
       print('Product title: ${_productDetails!.title}');
       print('Product description: ${_productDetails!.description}');
@@ -118,13 +121,27 @@ class _PremiumDrawerTileState extends State<PremiumDrawerTile> {
 
   @override
   Widget build(BuildContext context) {
-    return DrawerTile(
-      text: 'Get Premium',
-      icon: Icons.star,
-      onTap: () {
-        _buy();
-        // Navigator.pop(context);
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Get Premium'),
+      ),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Get premium to unlock all features'),
+            // todo: list features with images
+            const SizedBox(height: 20),
+            if (globals.hasPremium)
+              Text('You already have premium')
+            else
+            ElevatedButton(
+              onPressed: _buy,
+              child: Text('Buy Premium $price'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -31,7 +31,7 @@ class _ProductsPageState extends State<ProductsPage> {
         where: 'is_visible = ?',
         whereArgs: [1],
       );
-
+      await database.close();
       return List.generate(products.length, (index) {
         return Product(
           id: products[index]['id'],

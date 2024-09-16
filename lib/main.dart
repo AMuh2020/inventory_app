@@ -49,7 +49,7 @@ void main() async {
   // utils.deleteDatabaseFile();
   // Open the database and store the reference.
   // ignore: unused_local_variable
-  final database = openDatabase(
+  final database = await openDatabase(
     // Set the path to the database. Note: Using the `join` function from the
     // `path` package is best practice to ensure the path is correctly
     // constructed for each platform.
@@ -72,6 +72,7 @@ void main() async {
    // path to perform database upgrades and downgrades.
     version: 1,
   );
+  await database.close();
   runApp(
     MultiProvider(
       providers: [

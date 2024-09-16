@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_app/pages/main_page.dart';
 
 class FeedbackPage extends StatelessWidget {
   const FeedbackPage({super.key});
@@ -9,16 +8,6 @@ class FeedbackPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Feedback'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // instead of popping the context, remove stack and push homepage
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const MainPage()),
-              (route) => false,
-            );
-          },
-        ),
       ),
       body: const Center(
         child: Column(

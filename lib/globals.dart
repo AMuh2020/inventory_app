@@ -6,22 +6,21 @@ bool darkMode = false;
 
 bool customerInfoFields = false;
 
-String currencySymbol = '\$';
+String currencySymbol = '';
 
-String version = '1.0.1+8';
 
 bool hasPremium = false;
 
-String hexSeedColor = '0xFF9C27B0';
+String hexSeedColor = '';
 
 // colors are store in hex format so shared preferences can store them
 Color seedColor = utils.hexToColor(hexSeedColor);
 
 Map<String, dynamic> defaults = {
-  'darkMode': darkMode,
-  'customerInfoFields': customerInfoFields,
-  'currencySymbol': currencySymbol,
-  'seedColor': hexSeedColor,
-  'version': version,
-  'hasPremium': hasPremium,
+  'darkMode': false,
+  'customerInfoFields': false,
+  'currencySymbol': '\$',
+  'seedColor': '0xFF9C27B0',
+  'version': '1.0.1+8',
+  'hasPremium': false,
 };

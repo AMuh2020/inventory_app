@@ -25,16 +25,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // instead of popping the context, remove stack and push homepage
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const MainPage()),
-              (route) => false,
-            );
-          },
-        ),
       ),
       body: Column(
         children: [
@@ -60,16 +50,20 @@ class _SettingsPageState extends State<SettingsPage> {
               });
             },
           ),
-          SettingsTile(
-            text: 'Color Theme',
-            helperText: 'Select the color theme',
-            icon: Icons.color_lens,
-            trailing: SizedBox(),
-            onTap: () {
-              // show color picker
-              _colorpickDialog(context);
-            },
-          ),
+          
+          if (globals.hasPremium)
+            // color theme
+            SettingsTile(
+              text: 'Color Theme',
+              helperText: 'Select the color theme',
+              icon: Icons.color_lens,
+              trailing: SizedBox(),
+              onTap: () {
+                // show color picker
+                _colorpickDialog(context);
+              },
+            ),
+
           // currency symbol
           SettingsTile(
             text: 'Currency Symbol',
@@ -84,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     globals.currencySymbol = newValue!;
                   });
                 },
-                items: ['\$', '₹', '€', '£', '¥'].map<DropdownMenuItem<String>>((String value) {
+                items: ['\$', '₦', '₹', '€', '£', '¥',].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -94,19 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             onTap: () => {},
           ),
-          // reset settings
-          // SettingsTile(
-          //   text: 'Reset Settings',
-          //   helperText: 'Reset all settings to default',
-          //   icon: Icons.settings_backup_restore,
-          //   trailing: SizedBox(),
-          //   onTap: () {
-          //     // reset settings
-          //     utils.resetSettings();
-          //     // rebuild the page
-          //     setState(() {});
-          //   },
-          // ),
+
           // customer info fields toggle
           SettingsTile(
             text: 'Customer Info Fields',
@@ -126,6 +108,60 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             onTap: () => {},
           ),
+
+          // reset settings
+          SettingsTile(
+            text: 'Reset Settings',
+            helperText: 'Reset all settings to default',
+            icon: Icons.settings_backup_restore,
+            trailing: SizedBox(),
+            onTap: () {
+              // are you sure dialog
+              // show dialog
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Reset Settings'),
+                    content: const Text('Are you sure you want to reset all settings to default?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          // reset settings
+                          await utils.resetSettings();
+                          if (globals.darkMode != globals.defaults['darkMode']) {
+                            Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                          }
+                          if (globals.seedColor != globals.defaults['seedColor']) {
+                            Provider.of<ThemeProvider>(context, listen: false).changeSeedColor(utils.hexToColor(globals.defaults['seedColor']));
+                          }
+                          if (globals.currencySymbol != globals.defaults['currencySymbol']) {
+                            globals.currencySymbol = globals.defaults['currencySymbol'];
+                          }
+                          if (globals.customerInfoFields != globals.defaults['customerInfoFields']) {
+                            globals.customerInfoFields = globals.defaults['customerInfoFields'];
+                          }
+
+                          // set the state to rebuild the page
+                          setState(() {});
+                          print('Settings reset, default settings loaded');
+                        },
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  );
+                }
+              );
+            },
+          ),
+
           // delete all data
           SettingsTile(
             text: 'Delete All Data',

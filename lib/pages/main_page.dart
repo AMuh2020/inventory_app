@@ -7,7 +7,7 @@ import 'package:inventory_app/utils/export.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:provider/provider.dart';
 import 'package:inventory_app/main.dart';
-// import 'package:inventory_app/utils/export.dart';
+import 'package:inventory_app/globals.dart' as globals;
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -129,29 +129,33 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     } else if (_tabController.index == 1) {
       return [];
     } else if (_tabController.index == 2) {
-      return [
-        // export button - premium feature
-        Tooltip(
-          message: 'Export sales data to CSV',
-          child: ElevatedButton.icon(
-            label: const Text('Export'),
-            icon: const Icon(Icons.download),
-            iconAlignment: IconAlignment.end,
-            onPressed: () async {
-              print('Export button clicked!');
-              // export sales data to csv
-              await writeOrdersCsv();
-            },
+      if (globals.hasPremium) {
+        return [
+          // export button - premium feature
+          Tooltip(
+            message: 'Export sales data to CSV',
+            child: ElevatedButton.icon(
+              label: const Text('Export'),
+              icon: const Icon(Icons.download),
+              iconAlignment: IconAlignment.end,
+              onPressed: () async {
+                print('Export button clicked!');
+                // export sales data to csv
+                await writeOrdersCsv();
+              },
+            ),
           ),
-        ),
-        // search button
-        // IconButton(
-        //   icon: const Icon(Icons.search),
-        //   onPressed: () {
-        //     print('Search button clicked!');
-        //   },
-        // ),
-      ];
+          // search button
+          // IconButton(
+          //   icon: const Icon(Icons.search),
+          //   onPressed: () {
+          //     print('Search button clicked!');
+          //   },
+          // ),
+        ];
+      } else {
+        return [];
+      }
     } else {
       return [];
     }
