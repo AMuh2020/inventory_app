@@ -64,11 +64,14 @@ class _GetPremiumPageState extends State<GetPremiumPage> {
         if (purchaseDetails.status == PurchaseStatus.error) {
           print('error');
           print(purchaseDetails.error);
+          utils.showSnackBar(context,'Error: ${purchaseDetails.error!.message}');
           // _handleError(purchaseDetails.error!);
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
                   purchaseDetails.status == PurchaseStatus.restored) {
           // bool valid = await _verifyPurchase(purchaseDetails);
           utils.grantPremium();
+          print('${purchaseDetails} purchased');
+          utils.showSnackBar(context,'Purchase successful');
         }
         if (purchaseDetails.pendingCompletePurchase) {
           print('pending complete purchase');
@@ -125,21 +128,63 @@ class _GetPremiumPageState extends State<GetPremiumPage> {
       appBar: AppBar(
         title: const Text('Get Premium'),
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Get premium to unlock all features'),
-            // todo: list features with images
-            const SizedBox(height: 20),
-            if (globals.hasPremium)
-              Text('You already have premium')
-            else
-            ElevatedButton(
-              onPressed: _buy,
-              child: Text('Buy Premium $price'),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Get premium to unlock more features and support the developer for just $price!!'),
+              const SizedBox(height: 20),
+              Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      'Features include:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text('Product quantity graphs, to see how your inventory is doing'),
+                    AspectRatio(
+                      aspectRatio: 2.0,
+                      child: Image.asset('assets/premium/product_quantity.png')
+                    ),
+                    const Text('Customize the app with your favorite color'),
+                    AspectRatio(
+                      aspectRatio: 2.0,
+                      child: Image.asset('assets/premium/theme_color_picker.png')
+                    ),
+                    const Text('and more coming soon!'),
+                    const Text('feature requests are also welcome!'),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              // color theme changer
+              Center(
+                child: globals.hasPremium ?
+                  const Text(
+                    'You already have premium',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                  :
+                  ElevatedButton(
+                    onPressed: _buy,
+                    child: Text('Buy Premium $price'),
+                  ),
+              ),
+              const SizedBox(height: 20),
+              const Text('Getting premium also supports the developer (me) helping me to continue to build more features (and fix bugs!)'),
+              const Text('Thank you for your support!'),
+              SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:inventory_app/globals.dart' as globals;
+import 'package:inventory_app/utils/utils.dart' as utils;
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -20,17 +21,17 @@ class _CartPageState extends State<CartPage> {
   final TextEditingController _customerNameController = TextEditingController();
   final TextEditingController _customerPhoneNumberController = TextEditingController();
 
-  Future<void> _sellProducts() async {
+  Future<void> _sellProducts(BuildContext context) async {
     final database = await openDatabase(
       path.join(await getDatabasesPath(), 'inventory_app.db'),
     );
 
-    // Create a new order
-    final order = await database.insert(
-      'orders',
+    // Create a new sale
+    final sale = await database.insert(
+      'sales',
       <String, dynamic>{
         'id': null,
-        'order_datetime': DateTime.now().toIso8601String(),
+        'datetime': DateTime.now().toIso8601String(),
         'customer_name': _customerNameController.text,
         'customer_phone': _customerPhoneNumberController.text,
         'total': Provider.of<CartModel>(context, listen: false).totalPrice,
@@ -49,9 +50,9 @@ class _CartPageState extends State<CartPage> {
       print(cartItem.product);
       // Create a new order_products record - linking the order and product
       await database.insert(
-        'order_products',
+        'sale_products',
         <String, dynamic>{
-          'order_id': order,
+          'sale_id': sale,
           'product_id': cartItem.product.id,
           'quantity': cartItem.quantity,
           'unit_price': cartItem.product.price,
@@ -70,7 +71,7 @@ class _CartPageState extends State<CartPage> {
     // Show a snackbar
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Order placed!'),
+        content: Text('Sale made!'),
       ),
     );
     await database.close();
@@ -93,7 +94,7 @@ class _CartPageState extends State<CartPage> {
     return Column(
       children: [
         const Text(
-          'Order Summary',
+          'Sale Summary',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -136,7 +137,7 @@ class _CartPageState extends State<CartPage> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ), 
-                                    Text('Price: ${globals.currencySymbol}${double.parse(cartItem.product.price) * cartItem.quantity}'),
+                                    Text('Price: ${Provider.of<CurrencyProvider>(context).currencySymbol}${utils.twoDecimalPlaces((double.parse(cartItem.product.price) * cartItem.quantity).toString())}'),
                                   ],
                                 ),
                               ),
@@ -174,7 +175,7 @@ class _CartPageState extends State<CartPage> {
             }
           ),
         ),
-        globals.customerInfoFields ?
+        Provider.of<CustomerInfoProvider>(context).customerInfoFields ?
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -201,7 +202,7 @@ class _CartPageState extends State<CartPage> {
           ) : const SizedBox.shrink(),
         
         Text(
-          'Total: ${globals.currencySymbol}${Provider.of<CartModel>(context).totalPrice}',
+          'Total: ${Provider.of<CurrencyProvider>(context).currencySymbol}${Provider.of<CartModel>(context).totalPrice}',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -211,7 +212,7 @@ class _CartPageState extends State<CartPage> {
         ElevatedButton(
           onPressed: () {
             print('Sell button clicked!');
-            if (globals.customerInfoFields) {
+            if (CustomerInfoProvider().customerInfoFields) {
               if (_customerNameController.text.isEmpty || _customerPhoneNumberController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -229,7 +230,7 @@ class _CartPageState extends State<CartPage> {
               );
               return;
             }
-            _sellProducts();
+            _sellProducts(context);
           },
           child: const Text('Make sale'),
         ),

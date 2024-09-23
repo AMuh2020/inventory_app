@@ -20,6 +20,12 @@ String dateToDescrptiveString(String date) {
   return DateFormat('EEEE, MMMM d, y').format(parsedDateTime);
 }
 
+// convert a date string to datetime month day
+String dateToDayMonthYear(String date) {
+  DateTime parsedDateTime = DateTime.parse(date);
+  return DateFormat('MM-dd-YY').format(parsedDateTime);
+}
+
 // date to today, yesterday, last week, last month, or older
 String dateToHumanReadableString(String date) {
   DateTime parsedDateTime = DateTime.parse(date);

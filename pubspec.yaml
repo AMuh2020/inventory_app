@@ -1,7 +1,7 @@
 name: inventory_app
-description: "Inventory App by AMALWorks"
+description: "An Inventory management app for small businesses and individuals by AMALWorks"
 publish_to: 'none'
-version: 1.0.1+8
+version: 2.0.0+9
 environment:
   sdk: '>=3.4.3 <4.0.0'
 
@@ -14,7 +14,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.1.0
+  flutter_date_range_picker: ^0.1.1
   flutter_launcher_icons: ^0.13.1
+  graphic: ^2.5.0
   image_picker: ^1.1.2
   in_app_purchase: ^3.2.0
   intl: ^0.19.0
@@ -33,8 +35,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # assets:
-  #   - assets/scarf.jpg
+  assets:
+    - assets/premium/
 
 flutter_launcher_icons:
   android: "launcher_icon"

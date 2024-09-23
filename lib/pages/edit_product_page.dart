@@ -6,6 +6,8 @@ import 'package:inventory_app/models/product.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:inventory_app/utils/image_utils.dart' as imageUtils;
+import 'package:flutter/services.dart';
+import 'package:inventory_app/utils/text_formatters.dart' as textFormatters;
 
 class ProductEditPage extends StatefulWidget {
   const ProductEditPage({super.key, required this.product});
@@ -200,17 +202,35 @@ class _ProductEditPageState extends State<ProductEditPage> {
                   }
                 },
               ),
-              TextFormField(
+              TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Product Name'),
+                decoration: const InputDecoration(
+                  labelText: 'Product name',
+                  icon: Icon(Icons.shopping_bag),
+                ),
               ),
-              TextFormField(
+              TextField(
                 controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(
+                  labelText: 'Price',
+                  icon: Icon(Icons.attach_money),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                  textFormatters.DecimalTextInputFormatter(decimalRange: 2),
+                ],
               ),
-              TextFormField(
+              TextField(
                 controller: _quantityController,
-                decoration: const InputDecoration(labelText: 'Quantity'),
+                decoration: const InputDecoration(
+                  labelText: 'Quantity',
+                  icon: Icon(Icons.inventory_2),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
               ),
               ElevatedButton.icon(
                 onPressed: () async { 

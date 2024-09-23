@@ -3,6 +3,7 @@ import 'package:inventory_app/models/cart_item.dart';
 import 'package:inventory_app/models/product.dart';
 import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/themes/theme_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:media_store_plus/media_store_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'dart:io';
+import 'package:inventory_app/globals.dart' as globals;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,23 +61,25 @@ void main() async {
         'CREATE TABLE products(id INTEGER PRIMARY KEY, name TEXT, price TEXT, quantity INTEGER, image_path TEXT, created_at TEXT, updated_at TEXT, is_visible BOOLEAN NOT NULL CHECK (is_visible IN (0, 1)) DEFAULT 1)',
       );
       db.execute(
-        'CREATE TABLE orders(id INTEGER PRIMARY KEY, total TEXT, order_datetime TEXT, customer_name TEXT, customer_phone TEXT)',
+        'CREATE TABLE sales(id INTEGER PRIMARY KEY, total TEXT, datetime TEXT, customer_name TEXT, customer_phone TEXT)',
       );
       db.execute(
-        'CREATE TABLE order_products (order_id INTEGER, product_id INTEGER, quantity INTEGER, unit_price TEXT, PRIMARY KEY (order_id, product_id), FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE, FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE)'
+        'CREATE TABLE sale_products (sale_id INTEGER, product_id INTEGER, quantity INTEGER, unit_price TEXT, PRIMARY KEY (sale_id, product_id), FOREIGN KEY (sale_id) REFERENCES sales(id) ON DELETE CASCADE, FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE)'
       );
     },
    
    // Set the version. This executes the onCreate function and provides a
    // path to perform database upgrades and downgrades.
-    version: 1,
+    version: 2,
   );
   await database.close();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CartModel()),
-        ChangeNotifierProvider(create: (context) => ThemeProvider()), // Add other providers here
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => CurrencyProvider()),
+        ChangeNotifierProvider(create: (context) => CustomerInfoProvider()),
       ],
       child: const MainApp(),
     ),
@@ -96,12 +98,59 @@ class MainApp extends StatelessWidget {
   }
 }
 
+class CurrencyProvider with ChangeNotifier {
+  static final CurrencyProvider _instance = CurrencyProvider._internal();
+
+  factory CurrencyProvider() {
+    return _instance;
+  }
+
+  CurrencyProvider._internal();
+
+  String _currencySymbol = '';
+
+  String get currencySymbol => _currencySymbol;
+
+  set currencySymbol(String value) {
+    _currencySymbol = value;
+    utils.saveSharedPref('currencySymbol', String, value);
+    notifyListeners();
+  }
+}
+
+class CustomerInfoProvider with ChangeNotifier {
+  static final CustomerInfoProvider _instance = CustomerInfoProvider._internal();
+
+  factory CustomerInfoProvider() {
+    return _instance;
+  }
+
+  CustomerInfoProvider._internal();
+
+  bool _customerInfoFields = false;
+
+  bool get customerInfoFields => _customerInfoFields;
+
+  set customerInfoFields(bool value) {
+    _customerInfoFields = value;
+    utils.saveSharedPref('customerInfoFields', bool, value);
+    notifyListeners();
+  }
+}
 
 
 class CartModel extends ChangeNotifier {
   final List<CartItem> _cart = [];
 
-  double get totalPrice => _cart.fold(0, (total, current) => total + double.parse(current.product.price) * current.quantity);
+  String get totalPrice => calculateTotalPrice(_cart);
+
+  String calculateTotalPrice(List<CartItem> cart) {
+    double total = 0;
+    for (final cartItem in cart) {
+      total += double.parse(cartItem.product.price) * cartItem.quantity;
+    }
+    return total.toStringAsFixed(2);
+  }
 
   void clearCart() {
     _cart.clear();

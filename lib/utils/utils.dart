@@ -1,11 +1,12 @@
 
-// import 'package:inventory_app/themes/theme_provider.dart';
-// import 'package:provider/provider.dart';
+import 'package:inventory_app/models/cart_item.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory_app/globals.dart' as globals;
 import 'package:flutter/material.dart';
+import 'package:inventory_app/main.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future settingsStartUp() async {
   print('Starting up, loading settings');
@@ -43,7 +44,7 @@ Future settingsStartUp() async {
     print('Currency symbol key exists');
     print('Currency symbol value: ${prefs.getString('currencySymbol')}');
     // If it does exist, set the currency symbol to the value in the shared preferences
-    globals.currencySymbol = prefs.getString('currencySymbol')!;
+    CurrencyProvider().currencySymbol = prefs.getString('currencySymbol')!;
   }
 
   // Check if the seed color key exists
@@ -74,6 +75,7 @@ Future settingsStartUp() async {
   print('Settings loaded');
 }
 
+// Reset all settings to default
 Future resetSettings() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool('darkMode', globals.defaults['darkMode']);
@@ -88,6 +90,7 @@ Future resetSettings() async {
   return;
 }
 
+// give the user premium features
 void grantPremium() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool('hasPremium', true);
@@ -95,7 +98,12 @@ void grantPremium() async {
   // todo: premium features guide using
 }
 
+// format the price to two decimal places
+String twoDecimalPlaces(String value) {
+  return double.parse(value).toStringAsFixed(2);
+}
 
+// Convert hex color (String) to Color type
 Color hexToColor(String hexString) {
   hexString = hexString.replaceFirst('#', '').replaceFirst('0x', '');
   if (hexString.length == 6) {
@@ -104,13 +112,33 @@ Color hexToColor(String hexString) {
   print('Hex to color: $hexString');
   return Color(int.parse(hexString, radix: 16));
 }
+
+// Convert Color type to hex color (String)
 String colorToHexString(Color color) {
   return '0x${color.value.toRadixString(16).padLeft(8, '0')}';
 }
 
-void toggleCustomerInfoFields(bool customerInfoField) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setBool('customerInfoFields', customerInfoField);
+void showSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message),
+  ));
+}
+
+
+// delete all data from the app
+Future<void> deleteAllData() async {
+  await deleteDatabaseFile();
+  await deleteImages();
+  print('All data deleted');
+}
+
+// delete all images from the app
+Future<void> deleteImages() async {
+  // Get the path to the images directory
+  final imagesPath = await getApplicationDocumentsDirectory();
+  // Delete the images directory
+  imagesPath.delete(recursive: true);
+  print('Images deleted');
 }
 
 Future<void> deleteDatabaseFile() async {
@@ -122,4 +150,21 @@ Future<void> deleteDatabaseFile() async {
   // Delete the database file
   await deleteDatabase(path);
   print('Database deleted');
+}
+
+// A generic function to save shared preferences
+void saveSharedPref(String key, Type type , dynamic value) async {
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (type == String) {
+      prefs.setString(key, value.toString());
+    } else if (type == int) {
+      prefs.setInt(key, value);
+    } else if (type == bool) {
+      prefs.setBool(key, value);
+    }
+    print('Shared preferences saved $key of type $type with value $value');
+  } catch (e) {
+    print('Error saving shared preferences: $e');
+  }
 }

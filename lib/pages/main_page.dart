@@ -141,7 +141,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               onPressed: () async {
                 print('Export button clicked!');
                 // export sales data to csv
-                await writeOrdersCsv();
+                final result = await writeOrdersCsv();
+                if (result != null && result != '') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Sales data exported successfully to $result'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to export sales data!'),
+                    ),
+                  );
+                }
               },
             ),
           ),

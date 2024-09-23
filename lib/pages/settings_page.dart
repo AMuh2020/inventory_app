@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:inventory_app/components/restore_purchase_tile.dart';
 import 'package:inventory_app/components/settings_tile.dart';
 import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/themes/theme_provider.dart';
@@ -7,6 +8,7 @@ import 'package:inventory_app/utils/utils.dart' as utils;
 import 'package:provider/provider.dart';
 import 'package:inventory_app/globals.dart' as globals;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:inventory_app/main.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -18,7 +20,6 @@ class SettingsPage extends StatefulWidget {
 
 
 class _SettingsPageState extends State<SettingsPage> {
-  Color pickerColor = globals.seedColor;
   Color currentColor = globals.seedColor;
   @override
   Widget build(BuildContext context) {
@@ -34,19 +35,23 @@ class _SettingsPageState extends State<SettingsPage> {
             helperText: 'Toggle dark mode',
             icon: Icons.dark_mode,
             trailing: Switch(
-              value: globals.darkMode,
+              value: ThemeProvider().isDarkMode,
               onChanged: (value) {
-                Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                
                 setState(() {
-                  globals.darkMode = !globals.darkMode;
+                  ThemeProvider().toggleTheme();
+                  // ThemeProvider().isDarkMode = !ThemeProvider().isDarkMode;
+                  // globals.darkMode = !globals.darkMode;
                 });
               },
             ),
             onTap: () {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+              
               setState(() {
+                ThemeProvider().toggleTheme();
                 // toggle the value
-                globals.darkMode = !globals.darkMode;
+                // ThemeProvider().isDarkMode = !ThemeProvider().isDarkMode;
+                // globals.darkMode = !globals.darkMode;
               });
             },
           ),
@@ -57,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
               text: 'Color Theme',
               helperText: 'Select the color theme',
               icon: Icons.color_lens,
-              trailing: SizedBox(),
+              trailing: const SizedBox(),
               onTap: () {
                 // show color picker
                 _colorpickDialog(context);
@@ -72,10 +77,10 @@ class _SettingsPageState extends State<SettingsPage> {
             trailing: Padding(
               padding: const EdgeInsets.all(10.0),
               child: DropdownButton(
-                value: globals.currencySymbol,
+                value: Provider.of<CurrencyProvider>(context).currencySymbol,
                 onChanged: (String? newValue) {
                   setState(() {
-                    globals.currencySymbol = newValue!;
+                    CurrencyProvider().currencySymbol = newValue!;
                   });
                 },
                 items: ['\$', '₦', '₹', '€', '£', '¥',].map<DropdownMenuItem<String>>((String value) {
@@ -95,15 +100,13 @@ class _SettingsPageState extends State<SettingsPage> {
             helperText: 'Adds the option to enter customer name and phone number when selling products',
             icon: Icons.person,
             trailing: Switch(
-              value: globals.customerInfoFields,
+              value: Provider.of<CustomerInfoProvider>(context).customerInfoFields,
               onChanged: (value) {
                 // set the state with the new value
                 setState(() {
                   // toggle the value
-                  globals.customerInfoFields = !globals.customerInfoFields;
+                  CustomerInfoProvider().customerInfoFields = !CustomerInfoProvider().customerInfoFields;
                 });
-                // function to save the value to shared preferences
-                utils.toggleCustomerInfoFields(globals.customerInfoFields);
               },
             ),
             onTap: () => {},
@@ -136,17 +139,17 @@ class _SettingsPageState extends State<SettingsPage> {
                           Navigator.pop(context);
                           // reset settings
                           await utils.resetSettings();
-                          if (globals.darkMode != globals.defaults['darkMode']) {
+                          if (ThemeProvider().isDarkMode != globals.defaults['darkMode']) {
                             Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
                           }
                           if (globals.seedColor != globals.defaults['seedColor']) {
                             Provider.of<ThemeProvider>(context, listen: false).changeSeedColor(utils.hexToColor(globals.defaults['seedColor']));
                           }
-                          if (globals.currencySymbol != globals.defaults['currencySymbol']) {
-                            globals.currencySymbol = globals.defaults['currencySymbol'];
+                          if (CurrencyProvider().currencySymbol != globals.defaults['currencySymbol']) {
+                            CurrencyProvider().currencySymbol = globals.defaults['currencySymbol'];
                           }
-                          if (globals.customerInfoFields != globals.defaults['customerInfoFields']) {
-                            globals.customerInfoFields = globals.defaults['customerInfoFields'];
+                          if (CustomerInfoProvider().customerInfoFields != globals.defaults['customerInfoFields']) {
+                            CustomerInfoProvider().customerInfoFields = globals.defaults['customerInfoFields'];
                           }
 
                           // set the state to rebuild the page
@@ -172,16 +175,7 @@ class _SettingsPageState extends State<SettingsPage> {
               _deleteDialog();
             },
           ),
-          // Center(
-          //   child: ElevatedButton(
-          //     child: const Text('Reset Settings'),
-          //     onPressed: () {
-          //       setState(() {
-          //         // isDarkMode = false;
-          //       });
-          //     },
-          //   )
-          // )
+          RestorePurchaseTile(),
         ],
       )
     );
@@ -194,10 +188,10 @@ class _SettingsPageState extends State<SettingsPage> {
           title: const Text('Pick a color!'),
           content: SingleChildScrollView(
             child: BlockPicker(
-              pickerColor: pickerColor,
+              pickerColor: currentColor,
               onColorChanged: (Color color) {
                 print(color);
-                Provider.of<ThemeProvider>(context, listen: false).changeSeedColor(color);
+                ThemeProvider().changeSeedColor(color);
                 setState(() {
                   currentColor = color;
                   globals.hexSeedColor = utils.colorToHexString(color);

@@ -14,13 +14,13 @@ bool hasPremium = false;
 String hexSeedColor = '';
 
 // colors are store in hex format so shared preferences can store them
-Color seedColor = utils.hexToColor(hexSeedColor);
+Color seedColor = utils.hexToColor(defaults['seedColor']);
 
 Map<String, dynamic> defaults = {
   'darkMode': false,
   'customerInfoFields': false,
   'currencySymbol': '\$',
   'seedColor': '0xFF9C27B0',
-  'version': '1.0.1+8',
+  'version': '2.0.0',
   'hasPremium': false,
 };

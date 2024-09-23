@@ -6,6 +6,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:inventory_app/utils/image_utils.dart' as imageUtils;
+import 'package:flutter/services.dart';
+import 'package:inventory_app/utils/text_formatters.dart' as textFormatters;
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -154,6 +156,10 @@ class _AddProductPageState extends State<AddProductPage> {
                   icon: Icon(Icons.attach_money),
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                  textFormatters.DecimalTextInputFormatter(decimalRange: 2),
+                ],
               ),
               TextField(
                 controller: _quantityController,
@@ -161,7 +167,10 @@ class _AddProductPageState extends State<AddProductPage> {
                   labelText: 'Quantity',
                   icon: Icon(Icons.inventory_2),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: false),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
               ),
               SizedBox(height: 10,),
               ElevatedButton.icon(

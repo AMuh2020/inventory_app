@@ -29,6 +29,7 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
           ),
+          const Spacer(),
           // analytics - not implemented, for next update
           if (globals.hasPremium)
             DrawerTile(
@@ -43,7 +44,6 @@ class CustomDrawer extends StatelessWidget {
                 );
               },
             ),
-          const Spacer(),
           // premium drawer tile
           DrawerTile(
             text: 'Premium',
@@ -57,18 +57,6 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           DrawerTile(
-            text: 'Feedback',
-            icon: Icons.feedback,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FeedbackPage(),
-                ),
-              );
-            },
-          ),
-          DrawerTile(
             text: 'Settings',
             icon: Icons.settings,
             onTap: () {
@@ -76,6 +64,18 @@ class CustomDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SettingsPage(),
+                ),
+              );
+            },
+          ),
+          DrawerTile(
+            text: 'Feedback',
+            icon: Icons.feedback,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FeedbackPage(),
                 ),
               );
             },

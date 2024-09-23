@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_app/pages/order_page.dart';
+import 'package:inventory_app/pages/sale_page.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
 import 'package:inventory_app/utils/date_utils.dart' as date_utils;
@@ -13,23 +13,23 @@ class SalesPage extends StatefulWidget {
 
 class _SalesPageState extends State<SalesPage> {
 
-  Future<List<Map<String, dynamic>>> getOrders() async {
-    print('Getting orders');
+  Future<List<Map<String, dynamic>>> getSales() async {
+    print('Getting sales');
     // Open the database
     final database = await openDatabase(
       path.join(await getDatabasesPath(), 'inventory_app.db'),
     );
 
-    final List<Map<String, dynamic>> orders = await database.query(
-      'orders',
-      orderBy: 'order_datetime DESC',
+    final List<Map<String, dynamic>> sales = await database.query(
+      'sales',
+      orderBy: 'datetime DESC',
     );
-    print(orders);
+    print(sales);
     await database.close();
-    return List.generate(orders.length, (index) {
+    return List.generate(sales.length, (index) {
       return {
-        'id': orders[index]['id'],
-        'datetime': orders[index]['order_datetime'],
+        'id': sales[index]['id'],
+        'datetime': sales[index]['datetime'],
       };
     });
   }
@@ -40,7 +40,7 @@ class _SalesPageState extends State<SalesPage> {
       children: [
         Expanded(
           child: FutureBuilder(
-            future: getOrders(),
+            future: getSales(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {
@@ -61,7 +61,7 @@ class _SalesPageState extends State<SalesPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OrderPage(orderId: snapshot.data?[index]['id'].toString()),
+                            builder: (context) => SalePage(orderId: snapshot.data?[index]['id'].toString()),
                           ),
                         );
                       },

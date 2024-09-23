@@ -3,22 +3,32 @@ import 'package:inventory_app/globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeProvider() {
+  // Singleton instance
+  static final ThemeProvider _instance = ThemeProvider._internal();
+
+  // Factory constructor to return the singleton instance
+  factory ThemeProvider() {
+    return _instance;
+  }
+
+  // Private constructor
+  ThemeProvider._internal() {
+    _seedColor = globals.seedColor;
+    _isDarkMode = globals.darkMode;
+
     darkMode = ThemeData(
-      // brightness: Brightness.dark,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         brightness: Brightness.dark,
-        seedColor: seedColor,
+        seedColor: _seedColor,
       ),
     );
 
     lightMode = ThemeData(
-      // brightness: Brightness.light,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         brightness: Brightness.light,
-        seedColor: seedColor,
+        seedColor: _seedColor,
       ),
     );
 
@@ -28,22 +38,32 @@ class ThemeProvider extends ChangeNotifier {
   late ThemeData darkMode;
   late ThemeData lightMode;
   late ThemeData _themeData;
+  late Color _seedColor;
+  late bool _isDarkMode;
+
 
   ThemeData get themeData => _themeData;
 
-  // get the dark mode value from the globals
-  bool get isDarkMode => globals.darkMode;
+  bool get isDarkMode => _isDarkMode;
+
+  set isDarkMode(bool value) {
+    _isDarkMode = value;
+    notifyListeners();  
+  }
 
   // get the seed color from the globals
-  Color get seedColor => globals.seedColor;
+  Color get seedColor => _seedColor;
 
   void toggleTheme() {
+    print('Toggling theme');
+    print('isDarkMode: $_isDarkMode');
     saveIsDarkMode();
     if (isDarkMode) {
       _themeData = lightMode;
     } else {
       _themeData = darkMode;
     }
+    _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
   // save the shared preferences
@@ -55,6 +75,7 @@ class ThemeProvider extends ChangeNotifier {
     saveSeedColor();
     print('Changing seed color to $newColor');
     globals.seedColor = newColor;
+    _seedColor = newColor;
     darkMode = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(

@@ -20,33 +20,37 @@ Future<String> exportOrdersToCsv() async {
       path.join(await getDatabasesPath(), 'inventory_app.db'),
     );
 
-    final orders = await database.query('orders');
-    final orderProducts = await database.query('order_products');
+    final sales = await database.query('sales');
+    final saleProductData = await database.query('sale_products');
     final products = await database.query('products');
-    final List<Map<String, dynamic>> ordersList = [];
-    for (final order in orders) {
-      final orderProductsList = orderProducts.where((element) => element['order_id'] == order['id']).toList();
-      final orderProductsMap = <String, dynamic>{};
-      for (final orderProduct in orderProductsList) {
-        final product = products.firstWhere((element) => element['id'] == orderProduct['product_id']);
-        orderProductsMap['Name: ${product['name']}'] = 'Quantity ${orderProduct['quantity']}}';
+    final List<Map<String, dynamic>> outList = [];
+    for (final sale in sales) {
+      final saleProductsList = saleProductData.where((element) => element['sale_id'] == sale['id']).toList();
+      final saleProductsMap = <String, dynamic>{};
+      for (final saleProduct in saleProductsList) {
+        final product = products.firstWhere((element) => element['id'] == saleProduct['product_id']);
+        saleProductsMap['Name: ${product['name']}'] = 'Quantity ${saleProduct['quantity']}}';
+        outList.add({
+          'sale_id': sale['id'],
+          'product_id': saleProduct['product_id'],
+          'product_name': product['name'],
+          'quantity': saleProduct['quantity'],
+          'unit_price': saleProduct['unit_price'],
+          'subtotal': (saleProduct['quantity']as int) * double.parse(saleProduct['unit_price'] as String),
+          'customer_name': sale['customer_name'],
+          'customer_phone': sale['customer_phone'],
+          'datetime': date_utils.formatDateTime(sale['datetime'].toString()),
+        });
       }
-      ordersList.add({
-        'order_id': order['id'],
-        'order_datetime': date_utils.formatDateTime(order['order_datetime'].toString()),
-        'customer_name': order['customer_name'] ?? 'N/A',
-        'customer_phone': order['customer_phone'] ?? 'N/A',
-        'total': order['total'],
-        'products': orderProductsMap,
-      });
+      
     }
     await database.close();
-    return 'order_id,order_datetime,customer_name,customer_phone,total,products\n' 
-    + ListToCsvConverter().convert(ordersList.map((order) => order.values.toList()).toList());
+    return 'Sale ID,Product ID,Product Name,Quantity,Unit Price,Subtotal,Customer Name,Customer Phone,Datetime\n'
+    + ListToCsvConverter().convert(outList.map((product) => product.values.toList()).toList());
 }
 
 // Test function to write empty CSV file to downloads directory
-Future<void> writeOrdersCsv() async {
+Future<String> writeOrdersCsv() async {
   // fix 
   bool permissionGrant = false;
   if (Platform.isAndroid) {
@@ -64,7 +68,7 @@ Future<void> writeOrdersCsv() async {
     permissionGrant = await Permission.storage.request().isGranted;
   }
 
-  if (true || await Permission.storage.request().isGranted) {
+  if (permissionGrant) {
     final String csv = await exportOrdersToCsv();
     final String fileName = 'orders_${DateTime.now().toIso8601String()}.csv';
     // save file in downloads directory as temp file
@@ -84,11 +88,14 @@ Future<void> writeOrdersCsv() async {
       );
       print('CSV file written to $mediaPath');
       print(mediaPath);
+      return mediaPath.toString();
     } else {
       print('Failed to get downloads directory');
+      return '';
     }
   } else {
     print('Storage permission denied');
+    return '';
   }
 }
 
@@ -99,41 +106,3 @@ Future<Directory?> getDownloadsDirectory2() async {
     return await getDownloadsDirectory();
   }
 }
-
-// Future<void> exportOrdersToCsv() async {
-//   print('Exporting orders to CSV');
-//   final database = await openDatabase(
-//     path.join(await getDatabasesPath(), 'inventory_app.db'),
-//   );
-//   final orders = await database.query('orders');
-//   final orderProducts = await database.query('order_products');
-//   final products = await database.query('products');
-//   final List<Map<String, dynamic>> ordersList = [];
-//   for (final order in orders) {
-//     final orderProductsList = orderProducts.where((element) => element['order_id'] == order['id']).toList();
-//     final orderProductsMap = <String, dynamic>{};
-//     for (final orderProduct in orderProductsList) {
-//       final product = products.firstWhere((element) => element['id'] == orderProduct['product_id']);
-//       orderProductsMap[product['name'] as String] = orderProduct['quantity'];
-//     }
-//     ordersList.add({
-//       'order_id': order['id'],
-//       'order_datetime': order['order_datetime'],
-//       'customer_name': order['customer_name'],
-//       'customer_phone': order['customer_phone'],
-//       'total': order['total'],
-//       'products': orderProductsMap,
-//     });
-//   }
-//   final csv = ListToCsvConverter().convert(ordersList.map((order) => order.values.toList()).toList());
-//   final String fileName = 'orders_${DateTime.now().toIso8601String()}.csv';
-//   final Directory? downloadsDirectory = await getDownloadsDirectory();
-//   if (downloadsDirectory != null) {
-//     final String csvPath = '${downloadsDirectory.path}/$fileName';
-//     final File file = File(csvPath);
-//     await file.writeAsString(csv);
-//     print('Orders exported to $csvPath');
-//   } else {
-//     print('Failed to get downloads directory');
-//   }
-// }

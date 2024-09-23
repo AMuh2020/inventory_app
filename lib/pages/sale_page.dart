@@ -3,56 +3,58 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:inventory_app/pages/main_page.dart';
 import 'package:inventory_app/utils/date_utils.dart' as date_utils;
+import 'package:inventory_app/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as path;
-import 'package:inventory_app/globals.dart' as globals;
+import 'package:provider/provider.dart';
+import 'package:inventory_app/main.dart';
 
 
-class OrderPage extends StatefulWidget {
-  const OrderPage({super.key, required this.orderId});
+class SalePage extends StatefulWidget {
+  const SalePage({super.key, required this.orderId});
 
   final String? orderId;
 
   @override
-  State<OrderPage> createState() => _OrderPageState();
+  State<SalePage> createState() => _OrderPageState();
 }
 
-class _OrderPageState extends State<OrderPage> {
-  Map<String, dynamic> orderDetails = {};
+class _OrderPageState extends State<SalePage> {
+  Map<String, dynamic> saleDetails = {};
 
   Future<List<Map<String, dynamic>>> _fetchOrder() async {
     // Fetch the order from the database
     final database = await openDatabase(
       path.join(await getDatabasesPath(), 'inventory_app.db'),
     );
-    final order = await database.query(
-      'orders',
+    final sale = await database.query(
+      'sales',
       where: 'id = ?',
       whereArgs: [widget.orderId],
     );
-    print(order);
-    orderDetails = order[0];
+    print(sale);
+    saleDetails = sale[0];
     // Fetch the products in the order
-    final List<Map<String, dynamic>> orderProducts = await database.query(
-      'order_products',
-      where: 'order_id = ?',
-      whereArgs: [order[0]['id']],
+    final List<Map<String, dynamic>> saleProducts = await database.query(
+      'sale_products',
+      where: 'sale_id = ?',
+      whereArgs: [sale[0]['id']],
     );
-    print(orderProducts);
+    print(saleProducts);
     final List<Map<String, dynamic>> products = [];
-    for (final orderProduct in orderProducts) {
+    for (final saleProduct in saleProducts) {
       final product_query = await database.query(
         'products',
         where: 'id = ?',
-        whereArgs: [orderProduct['product_id']],
+        whereArgs: [saleProduct['product_id']],
       );
       print(product_query);
       final product = Map<String, dynamic>.from(product_query[0]);
       // print('PRO DUCT$product');
-      // for this page, we need to change the quantity to that of the product in the order
-      product['quantity'] = orderProduct['quantity'];
-      // and the unit price to that of the product in the order at the time of sale
-      product['price'] = orderProduct['unit_price'];
+      // for this page, we need to change the quantity to that of the product in the sale
+      product['quantity'] = saleProduct['quantity'];
+      // and the unit price to that of the product in the sale at the time of sale
+      product['price'] = saleProduct['unit_price'];
       products.add(product);
       
     }
@@ -76,7 +78,7 @@ class _OrderPageState extends State<OrderPage> {
         future: _fetchOrder(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            print(orderDetails);
+            print(saleDetails);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -86,15 +88,15 @@ class _OrderPageState extends State<OrderPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Sale #${widget.orderId}'),
-                      Text('${date_utils.formatTime(orderDetails['order_datetime'])}'),
-                      Text('${date_utils.formatDate(orderDetails['order_datetime'])}'),
-                      Text('Date: ${date_utils.dateToDescrptiveString(orderDetails['order_datetime'])}'),
-                      if (globals.customerInfoFields && orderDetails['customer_name'] != null && orderDetails['customer_name'] != '') 
-                       Text('Customer: ${orderDetails['customer_name']}'),
-                      if (globals.customerInfoFields && orderDetails['customer_phone'] != null && orderDetails['customer_phone'] != '') 
-                       Text('Customer Phone: ${orderDetails['customer_phone']}'),
+                      Text('${date_utils.formatTime(saleDetails['datetime'])}'),
+                      Text('${date_utils.formatDate(saleDetails['datetime'])}'),
+                      Text('Date: ${date_utils.dateToDescrptiveString(saleDetails['datetime'])}'),
+                      if (CustomerInfoProvider().customerInfoFields && saleDetails['customer_name'] != null && saleDetails['customer_name'] != '') 
+                       Text('Customer: ${saleDetails['customer_name']}'),
+                      if (CustomerInfoProvider().customerInfoFields && saleDetails['customer_phone'] != null && saleDetails['customer_phone'] != '') 
+                       Text('Customer Phone: ${saleDetails['customer_phone']}'),
                       
-                      Text('Total: ${globals.currencySymbol}${orderDetails['total']}'),
+                      Text('Total: ${Provider.of<CurrencyProvider>(context).currencySymbol}${saleDetails['total']}'),
                     ],
                   ),
                 ),
@@ -111,7 +113,7 @@ class _OrderPageState extends State<OrderPage> {
                                 height: 50,
                                 fit: BoxFit.cover,
                               )
-                            : const Icon(Icons.image),
+                            : SizedBox(height: 50,width: 50, child: const Icon(Icons.image)),
                         title: Text('Product: ${snapshot.data?[index]['name']}'),
                         subtitle: Text('Unit Price: ${snapshot.data?[index]['price']}, Quantity: ${snapshot.data?[index]['quantity']}'),
                       );
@@ -152,10 +154,14 @@ class _OrderPageState extends State<OrderPage> {
                                       path.join(await getDatabasesPath(), 'inventory_app.db'),
                                     );
                                     await database.delete(
-                                      'orders',
+                                      'sales',
                                       where: 'id = ?',
                                       whereArgs: [widget.orderId],
                                     );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                      content: Text('Sale deleted successfully'),
+                                    ));
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(builder: (context) => const MainPage()),

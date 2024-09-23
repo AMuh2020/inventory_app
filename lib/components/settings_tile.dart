@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class SettingsTile extends StatefulWidget {
   final String text;
-  final String helperText;
+  final String? helperText;
   final IconData icon;
-  final Widget trailing;
+  final Widget? trailing;
   final void Function() onTap;
   const SettingsTile({
     super.key,
     required this.text,
-    required this.helperText,
+    this.helperText,
     required this.icon,
-    required this.trailing,
+    this.trailing,
     required this.onTap,
   });
 
@@ -26,12 +26,12 @@ class _SettingsTileState extends State<SettingsTile> {
       title: Text(
         widget.text,
       ),
-      subtitle: Text(widget.helperText),
+      subtitle: widget.helperText != null ? Text(widget.helperText!) : null,
       leading: Icon(
         widget.icon,
         size: 30,
       ),
-      trailing: widget.trailing,
+      trailing: widget.trailing ?? SizedBox(),
       onTap: widget.onTap,
     );
   }
