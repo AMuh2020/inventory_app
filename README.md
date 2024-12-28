@@ -10,6 +10,6 @@ Over 15 weeks, I combined A/B testing and feedback from friends and family to im
   
 A huge thanks to [Durham University Venture Lab](https://www.linkedin.com/company/durham-university-venture-lab/) team for helping me explore potential markets and refine the app further. I'm thrilled to bring this project one step closer to its launch, and though it's not yet published on app stores, I'm actively looking for more testers.  
   
-I’ve shared more about this journey and other projects on my AMALWorks YouTube channel ([https://lnkd.in/eh5mUFsp](https://lnkd.in/eh5mUFsp)), check it out for updates on this project ([https://lnkd.in/ev6CCHcx](https://lnkd.in/ev6CCHcx)) and any other ones I'm working on!  
+I’ve shared more about this journey and other projects on my AMALWorks YouTube channel ([https://youtube.com/@amalworks24?si=NnvTTVL-2Vwh6a1I](https://youtube.com/@amalworks24?si=NnvTTVL-2Vwh6a1I)), check it out for updates on this project ([https://youtu.be/2rbqECMOtUw?si=uyODUesiUO5dJQY1](https://youtu.be/2rbqECMOtUw?si=uyODUesiUO5dJQY1)) and any other ones I'm working on!  
   
 This journey has been challenging, but the growth and knowledge I’ve gained along the way made every moment worth it! If you're interested in testing or learning more, feel free to reach out.
